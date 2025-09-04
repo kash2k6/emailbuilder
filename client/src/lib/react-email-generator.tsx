@@ -28,39 +28,26 @@ export interface ReactEmailGenerationOptions {
   };
 }
 
-// Helper function to process markdown text and return React.email compatible elements
+// Helper function to process markdown text and convert to HTML string for React.email
 function processTextWithMarkdown(content: string) {
   if (!content) return 'Enter your text here...';
   
-  // Split content by markdown patterns while preserving them
-  const parts = content.split(/(\*\*.*?\*\*|\*.*?\*)/);
+  // Convert markdown to HTML string with proper inline formatting
+  let htmlContent = content
+    // Convert **bold** to <strong>
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Convert *italic* to <em>
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Convert line breaks
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br/>');
   
-  return parts.map((part, index) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      // Bold text
-      return (
-        <Text key={index} style={{ fontWeight: 'bold', display: 'inline' }}>
-          {part.slice(2, -2)}
-        </Text>
-      );
-    } else if (part.startsWith('*') && part.endsWith('*')) {
-      // Italic text
-      return (
-        <Text key={index} style={{ fontStyle: 'italic', display: 'inline' }}>
-          {part.slice(1, -1)}
-        </Text>
-      );
-    } else {
-      // Regular text with line breaks
-      const lines = part.split('\n');
-      return lines.map((line, lineIndex) => (
-        <span key={`${index}-${lineIndex}`}>
-          {line}
-          {lineIndex < lines.length - 1 && <br />}
-        </span>
-      ));
-    }
-  });
+  // Wrap in paragraph if it doesn't start with one
+  if (!htmlContent.startsWith('<p>')) {
+    htmlContent = `<p>${htmlContent}</p>`;
+  }
+  
+  return htmlContent;
 }
 
 // Convert our elements to React.email components
@@ -107,9 +94,9 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           paddingRight: safeStyles.paddingX,
           paddingTop: safeStyles.paddingY,
           paddingBottom: safeStyles.paddingY,
-        }}>
-          {processTextWithMarkdown(element.content)}
-        </Text>
+        }} dangerouslySetInnerHTML={{
+          __html: processTextWithMarkdown(element.content)
+        }} />
       );
 
     case 'button':
