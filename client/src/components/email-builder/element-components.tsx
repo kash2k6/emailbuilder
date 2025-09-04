@@ -391,6 +391,18 @@ export function ElementComponents({ element }: ElementComponentsProps) {
   const renderSectionElement = () => {
     const styles = element.styles || {};
     const properties = element.properties || {};
+    const children = element.children || [];
+    
+    // Create drop target for section
+    const sectionDropTarget = createDropTarget({
+      onDrop: (componentType, e) => {
+        if (e) {
+          e.stopPropagation();
+        }
+        addElement(componentType as any, element.id);
+      },
+      accepts: ['text', 'button', 'image', 'divider', 'spacer', 'columns', 'social'],
+    });
     
     // Generate background style based on properties
     const getBackgroundStyle = () => {
@@ -423,12 +435,6 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     
     const isSelected = selectedElement?.id === element.id;
     
-    const dropTargetProps = createDropTarget({
-      onDrop: (componentType: string) => {
-        addElement(componentType as any, element.id);
-      },
-    });
-    
     return (
       <div
         style={{
@@ -447,16 +453,29 @@ export function ElementComponents({ element }: ElementComponentsProps) {
           }
         }}
         data-testid="element-section"
-        {...dropTargetProps}
+        {...sectionDropTarget}
       >
-        {element.children && element.children.length > 0 ? (
+        {children.length > 0 ? (
           <div className="space-y-4">
-            {element.children.map((child: any) => (
-              <ElementComponents key={child.id} element={child} />
+            {children.map((child) => (
+              <div
+                key={child.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  selectElement(child.id);
+                }}
+                className={cn(
+                  "cursor-pointer rounded-md transition-all duration-200",
+                  "hover:bg-blue-50/50 dark:hover:bg-blue-950/20",
+                  selectedElement?.id === child.id && "ring-2 ring-primary"
+                )}
+              >
+                <ElementComponents element={child} />
+              </div>
             ))}
           </div>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-center p-4">
+          <div className="flex items-center justify-center text-center p-8 min-h-[120px]">
             <div className="text-muted-foreground">
               <Plus className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p className="text-sm">
@@ -466,7 +485,7 @@ export function ElementComponents({ element }: ElementComponentsProps) {
           </div>
         )}
         
-        {/* Visual indicator when hovering */}
+        {/* Visual indicator when dragging over */}
         <div className="absolute inset-0 pointer-events-none border-2 border-dashed border-transparent group-hover:border-primary/30 rounded transition-colors" />
       </div>
     );
