@@ -102,7 +102,7 @@ export function PropertiesPanel() {
           to: testEmail,
           subject: testSubject,
           elements: elements,
-          emailWidth: 600,
+          emailWidth: emailWidth,
           emailBackground: emailBackground
         }),
       });
