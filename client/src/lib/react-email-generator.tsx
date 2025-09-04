@@ -71,11 +71,11 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
     marginBottom: getDefaultValue(styles.marginBottom || styles.bottomMargin, '16px'),
     marginLeft: getDefaultValue(styles.marginLeft || styles.leftMargin, '0px'),
     marginRight: getDefaultValue(styles.marginRight || styles.rightMargin, '0px'),
-    // Handle padding properties properly  
-    paddingTop: getDefaultValue(styles.paddingTop || styles.topPadding || styles.paddingY, '0px'),
-    paddingBottom: getDefaultValue(styles.paddingBottom || styles.bottomPadding || styles.paddingY, '0px'),
-    paddingLeft: getDefaultValue(styles.paddingLeft || styles.leftPadding || styles.paddingX, '20px'),
-    paddingRight: getDefaultValue(styles.paddingRight || styles.rightPadding || styles.paddingX, '20px'),
+    // Handle padding properties properly - give text elements proper default padding
+    paddingTop: getDefaultValue(styles.paddingTop || styles.topPadding || styles.paddingY, element.type === 'text' || element.type === 'header' ? '16px' : '0px'),
+    paddingBottom: getDefaultValue(styles.paddingBottom || styles.bottomPadding || styles.paddingY, element.type === 'text' || element.type === 'header' ? '16px' : '0px'),
+    paddingLeft: getDefaultValue(styles.paddingLeft || styles.leftPadding || styles.paddingX, element.type === 'text' || element.type === 'header' ? '24px' : '20px'),
+    paddingRight: getDefaultValue(styles.paddingRight || styles.rightPadding || styles.paddingX, element.type === 'text' || element.type === 'header' ? '24px' : '20px'),
     textAlign: getDefaultValue(styles.textAlign, element.type === 'button' ? 'center' : 'left'),
     fontWeight: getDefaultValue(styles.fontWeight, element.type === 'button' ? '600' : 'normal'),
     borderRadius: getDefaultValue(styles.borderRadius, element.type === 'button' ? '6px' : '0px'),
