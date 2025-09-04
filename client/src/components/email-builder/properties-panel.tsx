@@ -37,7 +37,7 @@ const FONT_OPTIONS = [
 ];
 
 export function PropertiesPanel() {
-  const { selectedElement, updateElement, deleteElement, duplicateElement } = useEmailBuilder();
+  const { selectedElement, updateElement, deleteElement, duplicateElement, emailBackground, setEmailBackground } = useEmailBuilder();
   const [localStyles, setLocalStyles] = useState(selectedElement?.styles || {});
   const [localProperties, setLocalProperties] = useState(selectedElement?.properties || {});
 
@@ -78,17 +78,186 @@ export function PropertiesPanel() {
     return (
       <div className="h-full flex flex-col">
         <div className="p-4 border-b border-border">
-          <h3 className="font-semibold text-base">Properties</h3>
+          <h3 className="font-semibold text-base">Email Background</h3>
           <p className="text-xs text-muted-foreground mt-1">
-            Select an element to edit properties
+            Customize the overall email appearance
           </p>
         </div>
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="text-center text-muted-foreground">
-            <MousePointer className="h-8 w-8 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">
-              Click on an element in the canvas to edit its properties
-            </p>
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          {/* Background Type Selector */}
+          <div className="space-y-3">
+            <Label>Background Type</Label>
+            <Select
+              value={emailBackground.type}
+              onValueChange={(value: 'color' | 'gradient' | 'image') => setEmailBackground({ type: value })}
+            >
+              <SelectTrigger data-testid="select-background-type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="color">Solid Color</SelectItem>
+                <SelectItem value="gradient">Gradient</SelectItem>
+                <SelectItem value="image">Image</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Color Background */}
+          {emailBackground.type === 'color' && (
+            <div className="space-y-3">
+              <Label>Background Color</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="color"
+                  value={emailBackground.backgroundColor || '#ffffff'}
+                  onChange={(e) => setEmailBackground({ backgroundColor: e.target.value })}
+                  className="w-12 h-10 p-1 border rounded cursor-pointer"
+                  data-testid="input-email-background-color"
+                />
+                <Input
+                  type="text"
+                  value={emailBackground.backgroundColor || '#ffffff'}
+                  onChange={(e) => setEmailBackground({ backgroundColor: e.target.value })}
+                  className="flex-1"
+                  placeholder="#ffffff"
+                  data-testid="input-email-background-color-hex"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Gradient Background */}
+          {emailBackground.type === 'gradient' && (
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <Label>Gradient Colors</Label>
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      type="color"
+                      value={emailBackground.gradientColors?.[0] || '#ffffff'}
+                      onChange={(e) => setEmailBackground({ 
+                        gradientColors: [e.target.value, emailBackground.gradientColors?.[1] || '#000000'] 
+                      })}
+                      className="w-12 h-10 p-1 border rounded cursor-pointer"
+                      data-testid="input-gradient-color-1"
+                    />
+                    <Input
+                      type="text"
+                      value={emailBackground.gradientColors?.[0] || '#ffffff'}
+                      onChange={(e) => setEmailBackground({ 
+                        gradientColors: [e.target.value, emailBackground.gradientColors?.[1] || '#000000'] 
+                      })}
+                      className="flex-1"
+                      placeholder="#ffffff"
+                      data-testid="input-gradient-color-1-hex"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      type="color"
+                      value={emailBackground.gradientColors?.[1] || '#000000'}
+                      onChange={(e) => setEmailBackground({ 
+                        gradientColors: [emailBackground.gradientColors?.[0] || '#ffffff', e.target.value] 
+                      })}
+                      className="w-12 h-10 p-1 border rounded cursor-pointer"
+                      data-testid="input-gradient-color-2"
+                    />
+                    <Input
+                      type="text"
+                      value={emailBackground.gradientColors?.[1] || '#000000'}
+                      onChange={(e) => setEmailBackground({ 
+                        gradientColors: [emailBackground.gradientColors?.[0] || '#ffffff', e.target.value] 
+                      })}
+                      className="flex-1"
+                      placeholder="#000000"
+                      data-testid="input-gradient-color-2-hex"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <Label>Gradient Direction</Label>
+                <Select
+                  value={emailBackground.gradientDirection || 'to-bottom'}
+                  onValueChange={(value) => setEmailBackground({ gradientDirection: value as any })}
+                >
+                  <SelectTrigger data-testid="select-gradient-direction">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="to-top">Top</SelectItem>
+                    <SelectItem value="to-bottom">Bottom</SelectItem>
+                    <SelectItem value="to-left">Left</SelectItem>
+                    <SelectItem value="to-right">Right</SelectItem>
+                    <SelectItem value="to-top-left">Top Left</SelectItem>
+                    <SelectItem value="to-top-right">Top Right</SelectItem>
+                    <SelectItem value="to-bottom-left">Bottom Left</SelectItem>
+                    <SelectItem value="to-bottom-right">Bottom Right</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
+          {/* Image Background */}
+          {emailBackground.type === 'image' && (
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <Label>Background Image</Label>
+                <Input
+                  type="url"
+                  value={emailBackground.imageUrl || ''}
+                  onChange={(e) => setEmailBackground({ imageUrl: e.target.value })}
+                  placeholder="https://example.com/image.jpg"
+                  data-testid="input-background-image-url"
+                />
+              </div>
+              <div className="space-y-3">
+                <Label>Fallback Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={emailBackground.backgroundColor || '#ffffff'}
+                    onChange={(e) => setEmailBackground({ backgroundColor: e.target.value })}
+                    className="w-12 h-10 p-1 border rounded cursor-pointer"
+                    data-testid="input-fallback-background-color"
+                  />
+                  <Input
+                    type="text"
+                    value={emailBackground.backgroundColor || '#ffffff'}
+                    onChange={(e) => setEmailBackground({ backgroundColor: e.target.value })}
+                    className="flex-1"
+                    placeholder="#ffffff"
+                    data-testid="input-fallback-background-color-hex"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Shows if the image fails to load
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Border Radius */}
+          <div className="space-y-3">
+            <Label>Rounded Corners</Label>
+            <Select
+              value={emailBackground.borderRadius || '0px'}
+              onValueChange={(value) => setEmailBackground({ borderRadius: value })}
+            >
+              <SelectTrigger data-testid="select-email-border-radius">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0px">None</SelectItem>
+                <SelectItem value="4px">Small (4px)</SelectItem>
+                <SelectItem value="8px">Medium (8px)</SelectItem>
+                <SelectItem value="12px">Large (12px)</SelectItem>
+                <SelectItem value="16px">Extra Large (16px)</SelectItem>
+                <SelectItem value="24px">XXL (24px)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>

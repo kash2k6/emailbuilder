@@ -4,6 +4,14 @@ export interface EmailGenerationOptions {
   emailWidth?: number;
   includeStyles?: boolean;
   optimizeForClient?: 'gmail' | 'outlook' | 'apple' | 'generic';
+  emailBackground?: {
+    type: 'color' | 'gradient' | 'image';
+    backgroundColor?: string;
+    gradientColors?: [string, string];
+    gradientDirection?: string;
+    imageUrl?: string;
+    borderRadius?: string;
+  };
 }
 
 export function generateEmailHTML(
@@ -11,7 +19,30 @@ export function generateEmailHTML(
   subject: string,
   options: EmailGenerationOptions = {}
 ): { html: string; text: string } {
-  const { emailWidth = 600, includeStyles = true } = options;
+  const { emailWidth = 600, includeStyles = true, emailBackground } = options;
+
+  // Generate background styles for email container
+  const getContainerBackgroundStyle = () => {
+    if (!emailBackground) return 'background-color: #ffffff; border-radius: 8px;';
+    
+    const { type, backgroundColor, gradientColors, gradientDirection, imageUrl, borderRadius } = emailBackground;
+    let bgStyle = '';
+    
+    if (type === 'color') {
+      bgStyle = `background-color: ${backgroundColor || '#ffffff'};`;
+    } else if (type === 'gradient' && gradientColors) {
+      const direction = gradientDirection || 'to-bottom';
+      // Convert CSS gradient direction to email-compatible format
+      const emailGradientDirection = direction.replace('to-', '').replace('-', ' ');
+      bgStyle = `background: linear-gradient(${emailGradientDirection}, ${gradientColors[0]}, ${gradientColors[1]}); background-color: ${gradientColors[0]};`;
+    } else if (type === 'image' && imageUrl) {
+      bgStyle = `background-image: url(${imageUrl}); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: ${backgroundColor || '#ffffff'};`;
+    }
+    
+    const borderRadiusStyle = borderRadius ? `border-radius: ${borderRadius};` : 'border-radius: 8px;';
+    
+    return bgStyle + ' ' + borderRadiusStyle;
+  };
 
   const elementsHTML = elements.map(element => generateElementHTML(element, options)).join('\n');
   const textContent = generateTextContent(elements);
@@ -29,7 +60,7 @@ export function generateEmailHTML(
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8fafc;">
     <tr>
       <td align="center" style="padding: 20px 0;">
-        <table class="container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="${emailWidth}" style="max-width: ${emailWidth}px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <table class="container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="${emailWidth}" style="max-width: ${emailWidth}px; ${getContainerBackgroundStyle()} overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
           <tr>
             <td style="padding: 0;">
               ${elementsHTML}

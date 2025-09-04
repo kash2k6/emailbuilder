@@ -80,6 +80,14 @@ export const emailBuilderDataSchema = z.object({
   subject: z.string(),
   elements: z.array(emailElementSchema),
   emailWidth: z.number().default(600),
+  emailBackground: z.object({
+    type: z.enum(['color', 'gradient', 'image']),
+    backgroundColor: z.string().optional(),
+    gradientColors: z.tuple([z.string(), z.string()]).optional(),
+    gradientDirection: z.string().optional(),
+    imageUrl: z.string().optional(),
+    borderRadius: z.string().optional(),
+  }).optional(),
 });
 
 // Types

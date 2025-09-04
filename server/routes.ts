@@ -144,15 +144,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Email HTML generation endpoint
   app.post("/api/generate-email-html", async (req, res) => {
     try {
-      const { elements, subject, emailWidth = 600 } = req.body;
+      const { elements, subject, emailWidth = 600, emailBackground } = req.body;
       
       if (!elements || !Array.isArray(elements)) {
         return res.status(400).json({ success: false, error: "Elements array is required" });
       }
 
-      // Generate email-compatible HTML
-      const htmlContent = generateEmailHTML(elements, subject, emailWidth);
-      const textContent = generateTextContent(elements);
+      // Generate email-compatible HTML using the imported function
+      const { generateEmailHTML } = await import('../client/src/lib/email-html-generator.js');
+      const { html: htmlContent, text: textContent } = generateEmailHTML(elements, subject, { 
+        emailWidth, 
+        emailBackground 
+      });
       
       res.json({ 
         success: true, 
@@ -209,188 +212,4 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   return httpServer;
-}
-
-// Helper function to generate email-compatible HTML
-function generateEmailHTML(elements: any[], subject: string, emailWidth: number): string {
-  const elementsHTML = elements.map(element => generateElementHTML(element)).join('\n');
-  
-  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${subject}</title>
-  <!--[if mso]>
-  <style type="text/css">
-    table, td { border-collapse: collapse; }
-    .container { width: ${emailWidth}px !important; }
-  </style>
-  <![endif]-->
-</head>
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-    <tr>
-      <td align="center" style="padding: 20px 0;">
-        <table class="container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="${emailWidth}" style="max-width: ${emailWidth}px; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
-          <tr>
-            <td style="padding: 0;">
-              ${elementsHTML}
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-}
-
-function generateElementHTML(element: any): string {
-  const styles = element.styles || {};
-  const properties = element.properties || {};
-  
-  switch (element.type) {
-    case 'text':
-    case 'header':
-      const textAlign = styles.textAlign || 'left';
-      const fontSize = styles.fontSize || '16px';
-      const color = styles.color || '#000000';
-      const lineHeight = styles.lineHeight || '1.6';
-      const margin = styles.margin || '15px 0';
-      const padding = styles.padding || '0 20px';
-      
-      // Convert markdown-like formatting to HTML
-      let content = element.content || '';
-      content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      content = content.replace(/\n\n/g, '</p><p style="margin: 0 0 16px 0;">');
-      content = content.replace(/\n/g, '<br>');
-      
-      return `
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          <tr>
-            <td style="padding: ${padding}; margin: ${margin}; text-align: ${textAlign}; font-size: ${fontSize}; color: ${color}; line-height: ${lineHeight};">
-              <p style="margin: 0;">${content}</p>
-            </td>
-          </tr>
-        </table>`;
-    
-    case 'button':
-      const buttonText = properties.text || element.content || 'Click Here';
-      const buttonUrl = properties.url || '#';
-      const buttonBg = styles.backgroundColor || '#007bff';
-      const buttonColor = styles.color || '#ffffff';
-      const buttonPadding = styles.padding || '12px 24px';
-      const buttonRadius = styles.borderRadius || '6px';
-      const buttonAlign = properties.alignment || 'center';
-      
-      return `
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          <tr>
-            <td style="padding: 20px; text-align: ${buttonAlign};">
-              <a href="${buttonUrl}" style="display: inline-block; background-color: ${buttonBg}; color: ${buttonColor}; padding: ${buttonPadding}; border-radius: ${buttonRadius}; text-decoration: none; font-weight: bold;">${buttonText}</a>
-            </td>
-          </tr>
-        </table>`;
-    
-    case 'image':
-      const imageSrc = properties.src || element.content || '';
-      const imageAlt = properties.alt || 'Image';
-      const imageWidth = properties.width || 'auto';
-      const imageHeight = properties.height || 'auto';
-      const imageAlign = styles.textAlign || 'center';
-      
-      return `
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          <tr>
-            <td style="padding: 20px; text-align: ${imageAlign};">
-              <img src="${imageSrc}" alt="${imageAlt}" style="max-width: 100%; height: auto; width: ${imageWidth}; ${imageHeight !== 'auto' ? `height: ${imageHeight};` : ''}" />
-            </td>
-          </tr>
-        </table>`;
-    
-    case 'divider':
-      const dividerColor = styles.borderTop?.split(' ')[2] || styles.backgroundColor || '#e0e0e0';
-      
-      return `
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          <tr>
-            <td style="padding: 20px;">
-              <hr style="border: none; border-top: 1px solid ${dividerColor}; margin: 0;" />
-            </td>
-          </tr>
-        </table>`;
-    
-    case 'spacer':
-      const spacerHeight = element.content || styles.height || '20px';
-      
-      return `
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          <tr>
-            <td style="height: ${spacerHeight}; line-height: ${spacerHeight};">&nbsp;</td>
-          </tr>
-        </table>`;
-    
-    case 'columns':
-      const children = element.children || [];
-      const leftChildren = children.filter((_: any, index: number) => index % 2 === 0);
-      const rightChildren = children.filter((_: any, index: number) => index % 2 === 1);
-      
-      return `
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          <tr>
-            <td style="padding: 20px;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                <tr>
-                  <td style="width: 50%; vertical-align: top; padding-right: 10px;">
-                    ${leftChildren.map(generateElementHTML).join('')}
-                  </td>
-                  <td style="width: 50%; vertical-align: top; padding-left: 10px;">
-                    ${rightChildren.map(generateElementHTML).join('')}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>`;
-    
-    case 'footer':
-      return `
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          <tr>
-            <td style="padding: 20px; text-align: center; font-size: 14px; color: #666666; border-top: 1px solid #e0e0e0;">
-              ${element.content || 'Footer content'}
-            </td>
-          </tr>
-        </table>`;
-    
-    default:
-      return '';
-  }
-}
-
-function generateTextContent(elements: any[]): string {
-  return elements.map(element => {
-    switch (element.type) {
-      case 'text':
-      case 'header':
-        return element.content || '';
-      case 'button':
-        return `${element.properties?.text || element.content || 'Click Here'}: ${element.properties?.url || '#'}`;
-      case 'image':
-        return `[Image: ${element.properties?.alt || 'Image'}]`;
-      case 'divider':
-        return '---';
-      case 'spacer':
-        return '\n';
-      case 'columns':
-        const children = element.children || [];
-        return children.map((child: any) => generateTextContent([child])).join('\n');
-      case 'footer':
-        return element.content || 'Footer content';
-      default:
-        return '';
-    }
-  }).filter(Boolean).join('\n\n');
 }

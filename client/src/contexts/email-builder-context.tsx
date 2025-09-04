@@ -12,6 +12,14 @@ interface EmailBuilderState {
   emailWidth: number;
   lastSaved: string | null;
   isSaving: boolean;
+  emailBackground: {
+    type: 'color' | 'gradient' | 'image';
+    backgroundColor?: string;
+    gradientColors?: [string, string];
+    gradientDirection?: 'to-right' | 'to-left' | 'to-top' | 'to-bottom' | 'to-top-right' | 'to-bottom-right' | 'to-top-left' | 'to-bottom-left';
+    imageUrl?: string;
+    borderRadius?: string;
+  };
 }
 
 interface EmailBuilderContextType extends EmailBuilderState {
@@ -23,6 +31,7 @@ interface EmailBuilderContextType extends EmailBuilderState {
   moveElement: (id: string, direction: 'up' | 'down') => void;
   setSubject: (subject: string) => void;
   setEmailWidth: (width: number) => void;
+  setEmailBackground: (background: Partial<EmailBuilderState['emailBackground']>) => void;
   generateHTML: () => Promise<string>;
   loadTemplate: (template: any) => void;
   loadFromTemplate: (template: any) => void;
@@ -45,6 +54,11 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     emailWidth: 600,
     lastSaved: null,
     isSaving: false,
+    emailBackground: {
+      type: 'color',
+      backgroundColor: '#ffffff',
+      borderRadius: '0px',
+    },
   });
 
   const queryClient = useQueryClient();
@@ -84,6 +98,11 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
         elements: (draftData.data as any).elements || [],
         subject: (draftData.data as any).subject || '',
         emailWidth: (draftData.data as any).emailWidth || 600,
+        emailBackground: (draftData.data as any).emailBackground || {
+          type: 'color',
+          backgroundColor: '#ffffff',
+          borderRadius: '0px',
+        },
       }));
     }
   }, [draftData]);
@@ -255,12 +274,20 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, emailWidth: width }));
   }, []);
 
+  const setEmailBackground = useCallback((background: Partial<EmailBuilderState['emailBackground']>) => {
+    setState(prev => ({ 
+      ...prev, 
+      emailBackground: { ...prev.emailBackground, ...background }
+    }));
+  }, []);
+
   const generateHTML = useCallback(async () => {
     try {
       const response = await apiRequest('POST', '/api/generate-email-html', {
         elements: state.elements,
         subject: state.subject,
         emailWidth: state.emailWidth,
+        emailBackground: state.emailBackground,
       });
 
       if (response.ok) {
@@ -276,7 +303,7 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
       });
       throw error;
     }
-  }, [state.elements, state.subject, state.emailWidth, toast]);
+  }, [state.elements, state.subject, state.emailWidth, state.emailBackground, toast]);
 
   const loadTemplate = useCallback((template: any) => {
     setState(prev => ({
@@ -302,8 +329,9 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
       elements: state.elements,
       subject: state.subject,
       emailWidth: state.emailWidth,
+      emailBackground: state.emailBackground,
     });
-  }, [state.elements, state.subject, state.emailWidth, saveDraftMutation]);
+  }, [state.elements, state.subject, state.emailWidth, state.emailBackground, saveDraftMutation]);
 
   const value: EmailBuilderContextType = {
     ...state,
@@ -315,6 +343,7 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     moveElement,
     setSubject,
     setEmailWidth,
+    setEmailBackground,
     generateHTML,
     loadTemplate,
     loadFromTemplate,

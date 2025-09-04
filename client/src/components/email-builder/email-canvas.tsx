@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export function EmailCanvas() {
-  const { elements, addElement, selectedElement, selectElement, deleteElement, duplicateElement, moveElement } = useEmailBuilder();
+  const { elements, addElement, selectedElement, selectElement, deleteElement, duplicateElement, moveElement, emailBackground } = useEmailBuilder();
   const { createDropTarget, isDragActive } = useDragDropContext();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -22,17 +22,51 @@ export function EmailCanvas() {
     // Remove accepts filter to allow all component types
   });
 
+  // Generate background style based on emailBackground
+  const getBackgroundStyle = () => {
+    const { type, backgroundColor, gradientColors, gradientDirection, imageUrl, borderRadius } = emailBackground;
+    
+    let style: React.CSSProperties = {
+      borderRadius: borderRadius || '0px',
+    };
+    
+    if (type === 'color') {
+      style.backgroundColor = backgroundColor || '#ffffff';
+    } else if (type === 'gradient' && gradientColors) {
+      const direction = gradientDirection || 'to-bottom';
+      style.background = `linear-gradient(${direction}, ${gradientColors[0]}, ${gradientColors[1]})`;
+    } else if (type === 'image' && imageUrl) {
+      style.backgroundImage = `url(${imageUrl})`;
+      style.backgroundSize = 'cover';
+      style.backgroundPosition = 'center';
+      style.backgroundRepeat = 'no-repeat';
+      if (backgroundColor) {
+        style.backgroundColor = backgroundColor; // Fallback color
+      }
+    }
+    
+    return style;
+  };
+
   return (
-    <Card 
-      className={cn(
-        "bg-card border border-border rounded-lg shadow-lg min-h-96 relative overflow-hidden",
-        "bg-[linear-gradient(45deg,#f8fafc_25%,transparent_25%),linear-gradient(-45deg,#f8fafc_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f8fafc_75%),linear-gradient(-45deg,transparent_75%,#f8fafc_75%)]",
-        "bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px]",
-        isDragActive && "ring-2 ring-primary ring-offset-2 bg-primary/5"
-      )}
-      {...dropTargetProps}
-      data-testid="email-canvas"
-    >
+    <div className="relative">
+      {/* Background grid pattern for empty areas only */}
+      <div 
+        className={cn(
+          "absolute inset-0 pointer-events-none",
+          "bg-[linear-gradient(45deg,#f8fafc_25%,transparent_25%),linear-gradient(-45deg,#f8fafc_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f8fafc_75%),linear-gradient(-45deg,transparent_75%,#f8fafc_75%)]",
+          "bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px]"
+        )}
+      />
+      <Card 
+        className={cn(
+          "border border-border shadow-lg min-h-96 relative overflow-hidden",
+          isDragActive && "ring-2 ring-primary ring-offset-2"
+        )}
+        style={getBackgroundStyle()}
+        {...dropTargetProps}
+        data-testid="email-canvas"
+      >
       {elements.length === 0 ? (
         /* Empty State */
         <div className="absolute inset-0 flex items-center justify-center text-center p-8">
@@ -190,6 +224,7 @@ export function EmailCanvas() {
           ))}
         </div>
       )}
-    </Card>
+      </Card>
+    </div>
   );
 }
