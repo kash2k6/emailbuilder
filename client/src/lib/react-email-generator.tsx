@@ -28,6 +28,41 @@ export interface ReactEmailGenerationOptions {
   };
 }
 
+// Helper function to process markdown text and return React.email compatible elements
+function processTextWithMarkdown(content: string) {
+  if (!content) return 'Enter your text here...';
+  
+  // Split content by markdown patterns while preserving them
+  const parts = content.split(/(\*\*.*?\*\*|\*.*?\*)/);
+  
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      // Bold text
+      return (
+        <Text key={index} style={{ fontWeight: 'bold', display: 'inline' }}>
+          {part.slice(2, -2)}
+        </Text>
+      );
+    } else if (part.startsWith('*') && part.endsWith('*')) {
+      // Italic text
+      return (
+        <Text key={index} style={{ fontStyle: 'italic', display: 'inline' }}>
+          {part.slice(1, -1)}
+        </Text>
+      );
+    } else {
+      // Regular text with line breaks
+      const lines = part.split('\n');
+      return lines.map((line, lineIndex) => (
+        <span key={`${index}-${lineIndex}`}>
+          {line}
+          {lineIndex < lines.length - 1 && <br />}
+        </span>
+      ));
+    }
+  });
+}
+
 // Convert our elements to React.email components
 function ElementToReactEmail({ element }: { element: EmailElement }) {
   const styles = element.styles || {};
@@ -73,7 +108,7 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           paddingTop: safeStyles.paddingY,
           paddingBottom: safeStyles.paddingY,
         }}>
-          {element.content || 'Enter your text here...'}
+          {processTextWithMarkdown(element.content)}
         </Text>
       );
 
