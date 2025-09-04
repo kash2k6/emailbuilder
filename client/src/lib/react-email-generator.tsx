@@ -87,6 +87,8 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       const buttonTextColor = styles.color || '#ffffff';
       const buttonBorderRadius = styles.borderRadius || '6px';
       
+      const isFullWidth = properties.fullWidth;
+      
       return (
         <Section style={{ 
           textAlign: properties.alignment || 'center', 
@@ -95,7 +97,10 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           paddingLeft: styles.paddingX || '20px',
           paddingRight: styles.paddingX || '20px'
         }}>
-          <table border={0} cellSpacing={0} cellPadding={0} style={{ margin: '0 auto' }}>
+          <table border={0} cellSpacing={0} cellPadding={0} style={{ 
+            margin: '0 auto',
+            width: isFullWidth ? '100%' : 'auto'
+          }}>
             <tr>
               <td>
                 <Link 
@@ -109,12 +114,13 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
                     fontWeight: styles.fontWeight || '600',
                     textDecoration: 'none',
                     fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-                    display: 'inline-block',
+                    display: 'block',
                     lineHeight: '1.4',
                     textAlign: 'center',
-                    minWidth: '120px',
+                    width: isFullWidth ? '100%' : 'auto',
+                    minWidth: isFullWidth ? '100%' : '120px',
                     boxSizing: 'border-box',
-                    border: 'none',
+                    border: `1px solid ${buttonBgColor}`,
                     msoHide: 'all'
                   }}
                 >
