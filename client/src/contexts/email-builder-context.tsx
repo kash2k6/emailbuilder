@@ -23,7 +23,7 @@ interface EmailBuilderState {
 }
 
 interface EmailBuilderContextType extends EmailBuilderState {
-  addElement: (type: EmailElement['type'], parentId?: string) => void;
+  addElement: (type: EmailElement['type'], parentId?: string, columnSide?: 'left' | 'right') => void;
   updateElement: (id: string, updates: Partial<EmailElement>) => void;
   deleteElement: (id: string) => void;
   duplicateElement: (id: string) => void;
@@ -108,7 +108,7 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
   }, [draftData]);
 
   // Add new element
-  const addElement = useCallback((type: EmailElement['type'], parentId?: string) => {
+  const addElement = useCallback((type: EmailElement['type'], parentId?: string, columnSide?: 'left' | 'right') => {
     if (!type) {
       return;
     }
@@ -126,11 +126,24 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
       // Add to column or section
       setState(prev => ({
         ...prev,
-        elements: prev.elements.map(el =>
-          el.id === parentId && (el.type === 'columns' || el.type === 'section')
-            ? { ...el, children: [...(el.children || []), newElement] }
-            : el
-        ),
+        elements: prev.elements.map(el => {
+          if (el.id === parentId) {
+            if (el.type === 'columns' && columnSide) {
+              // Add to specific column side
+              const leftChildren = el.leftChildren || [];
+              const rightChildren = el.rightChildren || [];
+              return {
+                ...el,
+                leftChildren: columnSide === 'left' ? [...leftChildren, newElement] : leftChildren,
+                rightChildren: columnSide === 'right' ? [...rightChildren, newElement] : rightChildren,
+              };
+            } else if (el.type === 'columns' || el.type === 'section') {
+              // Add to general children for sections or columns without specified side
+              return { ...el, children: [...(el.children || []), newElement] };
+            }
+          }
+          return el;
+        }),
         selectedElement: newElement,
       }));
     } else {
@@ -155,7 +168,12 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
         return { ...el, ...updates };
       }
       if (el.children) {
-        return { ...el, children: updateElementRecursive(el.children, id, updates) };
+        return {
+          ...el,
+          children: el.children ? updateElementRecursive(el.children, id, updates) : undefined,
+          leftChildren: el.leftChildren ? updateElementRecursive(el.leftChildren, id, updates) : undefined,
+          rightChildren: el.rightChildren ? updateElementRecursive(el.rightChildren, id, updates) : undefined,
+        };
       }
       return el;
     });
@@ -175,10 +193,12 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
   // Helper function to recursively delete elements
   const deleteElementRecursive = (elements: EmailElement[], id: string): EmailElement[] => {
     return elements.filter(el => el.id !== id).map(el => {
-      if (el.children) {
-        return { ...el, children: deleteElementRecursive(el.children, id) };
-      }
-      return el;
+      return {
+        ...el,
+        children: el.children ? deleteElementRecursive(el.children, id) : undefined,
+        leftChildren: el.leftChildren ? deleteElementRecursive(el.leftChildren, id) : undefined,
+        rightChildren: el.rightChildren ? deleteElementRecursive(el.rightChildren, id) : undefined,
+      };
     });
   };
 

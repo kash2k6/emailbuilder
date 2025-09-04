@@ -60,6 +60,8 @@ export const emailElementSchema = z.object({
   styles: z.record(z.string()).default({}),
   properties: z.record(z.any()).default({}),
   children: z.array(z.lazy(() => emailElementSchema)).optional(),
+  leftChildren: z.array(z.lazy(() => emailElementSchema)).optional(),
+  rightChildren: z.array(z.lazy(() => emailElementSchema)).optional(),
   parentId: z.string().optional(),
   position: z.number().default(0),
 });

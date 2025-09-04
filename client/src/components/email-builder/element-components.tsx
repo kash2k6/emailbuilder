@@ -260,16 +260,16 @@ export function ElementComponents({ element }: ElementComponentsProps) {
   };
 
   const renderColumnsElement = () => {
-    const children = element.children || [];
-    const leftChildren = children.filter((_, index) => index % 2 === 0);
-    const rightChildren = children.filter((_, index) => index % 2 === 1);
+    // Use separate left/right children arrays if available, otherwise fall back to splitting children
+    const leftChildren = element.leftChildren || element.children?.filter((_, index) => index % 2 === 0) || [];
+    const rightChildren = element.rightChildren || element.children?.filter((_, index) => index % 2 === 1) || [];
     
     const leftDropTarget = createDropTarget({
       onDrop: (componentType, e) => {
         if (e) {
           e.stopPropagation();
         }
-        addElement(componentType as any, element.id);
+        addElement(componentType as any, element.id, 'left');
       },
       accepts: ['text', 'button', 'image', 'divider', 'spacer', 'social'],
     });
@@ -279,7 +279,7 @@ export function ElementComponents({ element }: ElementComponentsProps) {
         if (e) {
           e.stopPropagation();
         }
-        addElement(componentType as any, element.id);
+        addElement(componentType as any, element.id, 'right');
       },
       accepts: ['text', 'button', 'image', 'divider', 'spacer', 'social'],
     });
