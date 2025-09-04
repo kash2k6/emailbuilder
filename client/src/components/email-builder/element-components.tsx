@@ -36,6 +36,8 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       ));
     });
 
+    const isSelected = selectedElement?.id === element.id;
+
     return (
       <div
         style={{
@@ -46,8 +48,19 @@ export function ElementComponents({ element }: ElementComponentsProps) {
           lineHeight: styles.lineHeight || '1.6',
           fontWeight: styles.fontWeight || 'normal',
           margin: styles.margin || '0',
+          cursor: 'pointer',
+          borderRadius: '4px',
+          transition: 'all 0.2s ease',
         }}
-        className="prose prose-sm max-w-none dark:prose-invert"
+        className={cn(
+          "prose prose-sm max-w-none dark:prose-invert hover:bg-muted/20 p-2 -m-2",
+          isSelected && "ring-2 ring-primary bg-primary/5"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          selectElement(element.id);
+        }}
+        data-testid="element-text"
       >
         {renderedContent}
       </div>
@@ -59,8 +72,21 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     const properties = element.properties || {};
     const buttonText = properties.text || element.content || 'Click Here';
     
+    const isSelected = selectedElement?.id === element.id;
+
     return (
-      <div style={{ textAlign: properties.alignment || 'center' }}>
+      <div 
+        style={{ textAlign: properties.alignment || 'center' }}
+        className={cn(
+          "p-2 -m-2 rounded transition-all duration-200 hover:bg-muted/20",
+          isSelected && "ring-2 ring-primary bg-primary/5"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          selectElement(element.id);
+        }}
+        data-testid="element-button-container"
+      >
         <Button
           style={{
             backgroundColor: styles.backgroundColor || 'hsl(var(--primary))',
@@ -74,6 +100,7 @@ export function ElementComponents({ element }: ElementComponentsProps) {
           }}
           className="hover:opacity-90 transition-opacity"
           data-testid="preview-button"
+          onClick={(e) => e.preventDefault()}
         >
           {buttonText}
         </Button>
@@ -86,12 +113,24 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     const properties = element.properties || {};
     const imageSrc = properties.src || element.content || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400';
     const imageAlt = properties.alt || 'Image';
+    const isSelected = selectedElement?.id === element.id;
     
     return (
-      <div style={{ 
-        textAlign: 'center',
-        margin: styles.margin || '20px 0'
-      }}>
+      <div 
+        style={{ 
+          textAlign: 'center',
+          margin: styles.margin || '20px 0'
+        }}
+        className={cn(
+          "p-2 -m-2 rounded transition-all duration-200 hover:bg-muted/20 cursor-pointer",
+          isSelected && "ring-2 ring-primary bg-primary/5"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          selectElement(element.id);
+        }}
+        data-testid="element-image-container"
+      >
         <img
           src={imageSrc}
           alt={imageAlt}
@@ -112,36 +151,65 @@ export function ElementComponents({ element }: ElementComponentsProps) {
 
   const renderDividerElement = () => {
     const styles = element.styles || {};
+    const isSelected = selectedElement?.id === element.id;
     
     return (
-      <hr
-        style={{
-          border: 'none',
-          borderTop: styles.borderTop || '1px solid hsl(var(--border))',
-          margin: styles.margin || '20px 0',
-          backgroundColor: 'transparent',
+      <div
+        className={cn(
+          "p-2 -m-2 rounded transition-all duration-200 hover:bg-muted/20 cursor-pointer",
+          isSelected && "ring-2 ring-primary bg-primary/5"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          selectElement(element.id);
         }}
-        data-testid="preview-divider"
-      />
+        data-testid="element-divider-container"
+      >
+        <hr
+          style={{
+            border: 'none',
+            borderTop: styles.borderTop || '1px solid hsl(var(--border))',
+            margin: styles.margin || '20px 0',
+            backgroundColor: 'transparent',
+          }}
+          data-testid="preview-divider"
+        />
+      </div>
     );
   };
 
   const renderSpacerElement = () => {
     const height = element.content || element.styles?.height || '20px';
+    const isSelected = selectedElement?.id === element.id;
     
     return (
       <div
         style={{
           height,
           backgroundColor: 'transparent',
+          cursor: 'pointer',
+          position: 'relative',
         }}
-        data-testid="preview-spacer"
-      />
+        className={cn(
+          "hover:bg-muted/10 transition-colors border border-dashed border-transparent hover:border-muted-foreground/30 rounded flex items-center justify-center",
+          isSelected && "ring-2 ring-primary bg-primary/5 border-primary/30"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          selectElement(element.id);
+        }}
+        data-testid="element-spacer"
+      >
+        {(isSelected || height === '20px') && (
+          <span className="text-xs text-muted-foreground">Spacer ({height})</span>
+        )}
+      </div>
     );
   };
 
   const renderHeaderElement = () => {
     const styles = element.styles || {};
+    const isSelected = selectedElement?.id === element.id;
     
     return (
       <div
@@ -154,8 +222,17 @@ export function ElementComponents({ element }: ElementComponentsProps) {
           fontWeight: styles.fontWeight || 'bold',
           borderRadius: '8px',
           margin: styles.margin || '0',
+          cursor: 'pointer',
         }}
-        data-testid="preview-header"
+        className={cn(
+          "transition-all duration-200 hover:opacity-90",
+          isSelected && "ring-2 ring-primary ring-offset-2"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          selectElement(element.id);
+        }}
+        data-testid="element-header"
       >
         {element.content || 'Header Text'}
       </div>
@@ -251,13 +328,24 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       { name: 'TikTok', icon: faTiktok, url: properties.tiktok || '', color: '#000000' },
     ].filter(social => social.url);
 
+    const isSelected = selectedElement?.id === element.id;
+
     return (
       <div
         style={{
           textAlign: (styles.textAlign as any) || 'center',
           margin: styles.margin || '20px 0',
+          cursor: 'pointer',
         }}
-        data-testid="preview-social"
+        className={cn(
+          "p-2 -m-2 rounded transition-all duration-200 hover:bg-muted/20",
+          isSelected && "ring-2 ring-primary bg-primary/5"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          selectElement(element.id);
+        }}
+        data-testid="element-social"
       >
         <div className="flex justify-center gap-4">
           {socialLinks.map((social) => (
@@ -267,6 +355,7 @@ export function ElementComponents({ element }: ElementComponentsProps) {
               className="hover:opacity-75 transition-all duration-200 hover:scale-110"
               title={social.name}
               style={{ color: properties.iconColor || social.color }}
+              onClick={(e) => e.preventDefault()}
             >
               <FontAwesomeIcon icon={social.icon} size="2x" />
             </a>
@@ -312,6 +401,8 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       return style;
     };
     
+    const isSelected = selectedElement?.id === element.id;
+    
     const dropTargetProps = createDropTarget({
       onDrop: (componentType: string) => {
         addElement(componentType as any, element.id);
@@ -320,9 +411,22 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     
     return (
       <div
-        style={getBackgroundStyle()}
-        className="relative group transition-all duration-200 hover:border-dashed hover:border-primary/30"
-        data-testid="preview-section"
+        style={{
+          ...getBackgroundStyle(),
+          cursor: 'pointer',
+        }}
+        className={cn(
+          "relative group transition-all duration-200 hover:border-dashed hover:border-primary/30",
+          isSelected && "ring-2 ring-primary"
+        )}
+        onClick={(e) => {
+          // Only select the section if clicking on empty space (not on children)
+          if (e.target === e.currentTarget) {
+            e.stopPropagation();
+            selectElement(element.id);
+          }
+        }}
+        data-testid="element-section"
         {...dropTargetProps}
       >
         {element.children && element.children.length > 0 ? (
@@ -351,6 +455,8 @@ export function ElementComponents({ element }: ElementComponentsProps) {
   const renderFooterElement = () => {
     const styles = element.styles || {};
     
+    const isSelected = selectedElement?.id === element.id;
+
     return (
       <div
         style={{
@@ -361,9 +467,17 @@ export function ElementComponents({ element }: ElementComponentsProps) {
           padding: styles.padding || '20px 0',
           borderTop: styles.borderTop || '1px solid hsl(var(--border))',
           backgroundColor: styles.backgroundColor || 'hsl(var(--muted)/0.5)',
+          cursor: 'pointer',
         }}
-        className="rounded-lg"
-        data-testid="preview-footer"
+        className={cn(
+          "rounded-lg transition-all duration-200 hover:bg-muted/20",
+          isSelected && "ring-2 ring-primary"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          selectElement(element.id);
+        }}
+        data-testid="element-footer"
       >
         <div className="space-y-3">
           <div className="flex justify-center gap-4 mb-3">
