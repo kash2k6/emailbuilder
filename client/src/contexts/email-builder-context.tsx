@@ -468,15 +468,16 @@ function getDefaultStyles(type: EmailElement['type']): Record<string, any> {
       };
     case 'button':
       return {
-        backgroundColor: 'hsl(222.2 47.4% 11.2%)',
-        color: 'hsl(210 40% 98%)',
+        backgroundColor: '#ef4444',
+        color: '#ffffff',
         borderRadius: '6px',
         paddingX: '24px',
         paddingY: '12px',
         textAlign: 'center',
         fontSize: '16px',
-        fontWeight: '500',
-        margin: '20px 0',
+        fontWeight: '600',
+        marginTop: '16px',
+        marginBottom: '16px',
       };
     case 'image':
       return {
