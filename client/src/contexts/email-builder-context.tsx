@@ -259,8 +259,17 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
       if (el.id === id) {
         return el;
       }
+      // Search in all children arrays
       if (el.children) {
         const found = findElementRecursive(el.children, id);
+        if (found) return found;
+      }
+      if (el.leftChildren) {
+        const found = findElementRecursive(el.leftChildren, id);
+        if (found) return found;
+      }
+      if (el.rightChildren) {
+        const found = findElementRecursive(el.rightChildren, id);
         if (found) return found;
       }
     }
@@ -270,6 +279,7 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
   // Select element
   const selectElement = useCallback((id: string) => {
     const element = findElementRecursive(state.elements, id);
+    console.log('Selecting element:', id, element ? 'found' : 'not found');
     setState(prev => ({
       ...prev,
       selectedElement: element || null,
