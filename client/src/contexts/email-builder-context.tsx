@@ -78,7 +78,7 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
 
   // Load draft data when available
   useEffect(() => {
-    if (draftData && 'success' in draftData && draftData.success && 'data' in draftData && draftData.data) {
+    if (draftData && typeof draftData === 'object' && 'success' in draftData && draftData.success && 'data' in draftData && draftData.data) {
       setState(prev => ({
         ...prev,
         elements: (draftData.data as any).elements || [],
@@ -90,7 +90,7 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
 
   // Add new element
   const addElement = useCallback((type: EmailElement['type'], parentId?: string) => {
-    if (!type || type === '') {
+    if (!type) {
       return;
     }
     
@@ -129,24 +129,45 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     });
   }, [state.elements.length, toast]);
 
+  // Helper function to recursively update elements in nested structures
+  const updateElementRecursive = (elements: EmailElement[], id: string, updates: Partial<EmailElement>): EmailElement[] => {
+    return elements.map(el => {
+      if (el.id === id) {
+        return { ...el, ...updates };
+      }
+      if (el.children) {
+        return { ...el, children: updateElementRecursive(el.children, id, updates) };
+      }
+      return el;
+    });
+  };
+
   // Update element
   const updateElement = useCallback((id: string, updates: Partial<EmailElement>) => {
     setState(prev => ({
       ...prev,
-      elements: prev.elements.map(el =>
-        el.id === id ? { ...el, ...updates } : el
-      ),
+      elements: updateElementRecursive(prev.elements, id, updates),
       selectedElement: prev.selectedElement?.id === id
         ? { ...prev.selectedElement, ...updates }
         : prev.selectedElement,
     }));
   }, []);
 
+  // Helper function to recursively delete elements
+  const deleteElementRecursive = (elements: EmailElement[], id: string): EmailElement[] => {
+    return elements.filter(el => el.id !== id).map(el => {
+      if (el.children) {
+        return { ...el, children: deleteElementRecursive(el.children, id) };
+      }
+      return el;
+    });
+  };
+
   // Delete element
   const deleteElement = useCallback((id: string) => {
     setState(prev => ({
       ...prev,
-      elements: prev.elements.filter(el => el.id !== id),
+      elements: deleteElementRecursive(prev.elements, id),
       selectedElement: prev.selectedElement?.id === id ? null : prev.selectedElement,
     }));
 
@@ -179,9 +200,23 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     }
   }, [state.elements, toast]);
 
+  // Helper function to find element recursively
+  const findElementRecursive = (elements: EmailElement[], id: string): EmailElement | null => {
+    for (const el of elements) {
+      if (el.id === id) {
+        return el;
+      }
+      if (el.children) {
+        const found = findElementRecursive(el.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
   // Select element
   const selectElement = useCallback((id: string) => {
-    const element = state.elements.find(el => el.id === id);
+    const element = findElementRecursive(state.elements, id);
     setState(prev => ({
       ...prev,
       selectedElement: element || null,

@@ -112,6 +112,7 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
       },
       onDrop: (e: React.DragEvent) => {
         e.preventDefault();
+        e.stopPropagation(); // Stop event from bubbling up
         
         // Try multiple ways to get the type
         let type = e.dataTransfer.getData('text/plain');

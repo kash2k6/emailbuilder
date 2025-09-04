@@ -10,7 +10,7 @@ interface ElementComponentsProps {
 }
 
 export function ElementComponents({ element }: ElementComponentsProps) {
-  const { addElement } = useEmailBuilder();
+  const { addElement, selectElement, selectedElement } = useEmailBuilder();
   const { createDropTarget } = useDragDropContext();
   const renderTextElement = () => {
     const styles = element.styles || {};
@@ -161,14 +161,20 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     const rightChildren = children.filter((_, index) => index % 2 === 1);
     
     const leftDropTarget = createDropTarget({
-      onDrop: (componentType) => {
+      onDrop: (componentType, e) => {
+        if (e) {
+          e.stopPropagation();
+        }
         addElement(componentType as any, element.id);
       },
       accepts: ['text', 'button', 'image', 'divider', 'spacer', 'social'],
     });
 
     const rightDropTarget = createDropTarget({
-      onDrop: (componentType) => {
+      onDrop: (componentType, e) => {
+        if (e) {
+          e.stopPropagation();
+        }
         addElement(componentType as any, element.id);
       },
       accepts: ['text', 'button', 'image', 'divider', 'spacer', 'social'],
@@ -178,7 +184,20 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       <div className="grid md:grid-cols-2 gap-4" data-testid="preview-columns">
         <div className="space-y-3 min-h-[100px]" {...leftDropTarget}>
           {leftChildren.map((child) => (
-            <ElementComponents key={child.id} element={child} />
+            <div
+              key={child.id}
+              onClick={(e) => {
+                e.stopPropagation();
+                selectElement(child.id);
+              }}
+              className={cn(
+                "cursor-pointer rounded-md transition-all duration-200",
+                "hover:bg-blue-50/50 dark:hover:bg-blue-950/20",
+                selectedElement?.id === child.id && "ring-2 ring-primary"
+              )}
+            >
+              <ElementComponents element={child} />
+            </div>
           ))}
           {leftChildren.length === 0 && (
             <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border rounded h-20 flex items-center justify-center">
@@ -188,7 +207,20 @@ export function ElementComponents({ element }: ElementComponentsProps) {
         </div>
         <div className="space-y-3 min-h-[100px]" {...rightDropTarget}>
           {rightChildren.map((child) => (
-            <ElementComponents key={child.id} element={child} />
+            <div
+              key={child.id}
+              onClick={(e) => {
+                e.stopPropagation();
+                selectElement(child.id);
+              }}
+              className={cn(
+                "cursor-pointer rounded-md transition-all duration-200",
+                "hover:bg-blue-50/50 dark:hover:bg-blue-950/20",
+                selectedElement?.id === child.id && "ring-2 ring-primary"
+              )}
+            >
+              <ElementComponents element={child} />
+            </div>
           ))}
           {rightChildren.length === 0 && (
             <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border rounded h-20 flex items-center justify-center">
