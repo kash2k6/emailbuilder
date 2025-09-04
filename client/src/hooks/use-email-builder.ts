@@ -187,11 +187,35 @@ export function useEmailBuilder() {
   // Select element
   const selectElement = useCallback((id: string) => {
     const element = state.elements.find(el => el.id === id);
+    console.log('Selecting element:', id, element);
     setState(prev => ({
       ...prev,
       selectedElement: element || null,
     }));
   }, [state.elements]);
+
+  // Move element
+  const moveElement = useCallback((id: string, direction: 'up' | 'down') => {
+    setState(prev => {
+      const elements = [...prev.elements];
+      const currentIndex = elements.findIndex(el => el.id === id);
+      
+      if (currentIndex === -1) return prev;
+      
+      if (direction === 'up' && currentIndex > 0) {
+        [elements[currentIndex], elements[currentIndex - 1]] = [elements[currentIndex - 1], elements[currentIndex]];
+      } else if (direction === 'down' && currentIndex < elements.length - 1) {
+        [elements[currentIndex], elements[currentIndex + 1]] = [elements[currentIndex + 1], elements[currentIndex]];
+      } else {
+        return prev; // No change needed
+      }
+      
+      return {
+        ...prev,
+        elements,
+      };
+    });
+  }, []);
 
   // Set subject
   const setSubject = useCallback((subject: string) => {
@@ -272,6 +296,7 @@ export function useEmailBuilder() {
     deleteElement,
     duplicateElement,
     selectElement,
+    moveElement,
     setSubject,
     setEmailWidth,
     generateHTML,

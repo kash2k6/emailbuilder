@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useEmailBuilder } from "@/hooks/use-email-builder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,14 @@ export function PropertiesPanel() {
   const { selectedElement, updateElement, deleteElement, duplicateElement } = useEmailBuilder();
   const [localStyles, setLocalStyles] = useState(selectedElement?.styles || {});
   const [localProperties, setLocalProperties] = useState(selectedElement?.properties || {});
+
+  // Update local state when selectedElement changes
+  useEffect(() => {
+    if (selectedElement) {
+      setLocalStyles(selectedElement.styles || {});
+      setLocalProperties(selectedElement.properties || {});
+    }
+  }, [selectedElement]);
 
   const handleStyleChange = (key: string, value: string) => {
     const newStyles = { ...localStyles, [key]: value };

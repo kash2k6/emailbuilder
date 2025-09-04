@@ -3,11 +3,11 @@ import { useDragDropContext } from "@/lib/drag-drop-context";
 import { ElementComponents } from "./element-components";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Hand, Plus, Copy, Trash2 } from "lucide-react";
+import { Hand, Plus, Copy, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function EmailCanvas() {
-  const { elements, addElement, selectedElement, selectElement, deleteElement, duplicateElement } = useEmailBuilder();
+  const { elements, addElement, selectedElement, selectElement, deleteElement, duplicateElement, moveElement } = useEmailBuilder();
   const { createDropTarget, isDragActive } = useDragDropContext();
 
   const handleDrop = (componentType: string) => {
@@ -64,6 +64,7 @@ export function EmailCanvas() {
               )}
               onClick={(e) => {
                 e.stopPropagation();
+                console.log('Element clicked:', element.id, element.type);
                 selectElement(element.id);
               }}
               data-testid={`element-${element.type}-${element.id}`}
@@ -77,6 +78,34 @@ export function EmailCanvas() {
 
               {/* Element Actions */}
               <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex gap-1">
+                {/* Move Up */}
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="h-6 w-6 p-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    moveElement(element.id, 'up');
+                  }}
+                  disabled={index === 0}
+                  data-testid={`button-move-up-${element.id}`}
+                >
+                  <ChevronUp className="h-3 w-3" />
+                </Button>
+                {/* Move Down */}
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="h-6 w-6 p-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    moveElement(element.id, 'down');
+                  }}
+                  disabled={index === elements.length - 1}
+                  data-testid={`button-move-down-${element.id}`}
+                >
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
                 <Button
                   size="sm"
                   variant="secondary"
