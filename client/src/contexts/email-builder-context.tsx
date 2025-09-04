@@ -475,6 +475,8 @@ function getDefaultProperties(type: EmailElement['type']): Record<string, any> {
         twitter: '',
         instagram: '',
         linkedin: '',
+        tiktok: '',
+        iconColor: '',
       };
     case 'footer':
       return {

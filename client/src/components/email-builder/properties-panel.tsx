@@ -641,6 +641,36 @@ export function PropertiesPanel() {
                     data-testid="input-linkedin-url"
                   />
                 </div>
+                <div>
+                  <Label className="mb-2 block text-sm">TikTok URL</Label>
+                  <Input
+                    type="url"
+                    value={localProperties.tiktok || ''}
+                    onChange={(e) => handlePropertyChange('tiktok', e.target.value)}
+                    placeholder="https://tiktok.com/@youraccount"
+                    data-testid="input-tiktok-url"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <Label>Icon Color</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="color"
+                  value={localProperties.iconColor || '#000000'}
+                  onChange={(e) => handlePropertyChange('iconColor', e.target.value)}
+                  className="w-12 h-10 p-1 border rounded cursor-pointer"
+                  data-testid="input-icon-color"
+                />
+                <Input
+                  type="text"
+                  value={localProperties.iconColor || '#000000'}
+                  onChange={(e) => handlePropertyChange('iconColor', e.target.value)}
+                  className="flex-1"
+                  placeholder="#000000"
+                  data-testid="input-icon-color-hex"
+                />
               </div>
             </div>
           </div>

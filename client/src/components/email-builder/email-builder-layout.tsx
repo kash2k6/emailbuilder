@@ -40,7 +40,6 @@ export function EmailBuilderLayout() {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
   const [showPreview, setShowPreview] = useState(false);
   const [showSendDialog, setShowSendDialog] = useState(false);
-  const [showTemplateManager, setShowTemplateManager] = useState(false);
 
   const {
     elements,
@@ -117,20 +116,7 @@ export function EmailBuilderLayout() {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
-            <Dialog open={showTemplateManager} onOpenChange={setShowTemplateManager}>
-              <DialogTrigger asChild>
-                <Button variant="secondary" size="sm" data-testid="button-templates">
-                  <Save className="h-4 w-4 mr-2" />
-                  {!isMobile && "Templates"}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl">
-                <DialogHeader>
-                  <DialogTitle>Email Templates</DialogTitle>
-                </DialogHeader>
-                <TemplateManager />
-              </DialogContent>
-            </Dialog>
+            {/* Templates removed per user request */}
 
             <Dialog open={showPreview} onOpenChange={setShowPreview}>
               <DialogTrigger asChild>

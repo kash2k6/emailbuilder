@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useDragDropContext } from "@/lib/drag-drop-context";
 import { useEmailBuilder } from "@/contexts/email-builder-context";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebook, faTwitter, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import { faFacebook, faTwitter, faInstagram, faLinkedin, faTiktok } from '@fortawesome/free-brands-svg-icons';
 
 interface ElementComponentsProps {
   element: EmailElement;
@@ -247,6 +247,7 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       { name: 'Twitter', icon: faTwitter, url: properties.twitter || '', color: '#1DA1F2' },
       { name: 'Instagram', icon: faInstagram, url: properties.instagram || '', color: '#E4405F' },
       { name: 'LinkedIn', icon: faLinkedin, url: properties.linkedin || '', color: '#0A66C2' },
+      { name: 'TikTok', icon: faTiktok, url: properties.tiktok || '', color: '#000000' },
     ].filter(social => social.url);
 
     return (
@@ -264,7 +265,7 @@ export function ElementComponents({ element }: ElementComponentsProps) {
               href={social.url}
               className="hover:opacity-75 transition-all duration-200 hover:scale-110"
               title={social.name}
-              style={{ color: styles.iconColor || social.color }}
+              style={{ color: properties.iconColor || social.color }}
             >
               <FontAwesomeIcon icon={social.icon} size="2x" />
             </a>

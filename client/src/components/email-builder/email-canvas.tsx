@@ -94,17 +94,19 @@ export function EmailCanvas() {
                 e.preventDefault();
                 e.stopPropagation();
                 if (draggedIndex !== null && draggedIndex !== index) {
-                  const draggedElement = elements[draggedIndex];
-                  if (draggedIndex < index) {
-                    // Moving down
-                    for (let i = 0; i < index - draggedIndex; i++) {
-                      moveElement(draggedElement.id, 'down');
-                    }
-                  } else {
-                    // Moving up  
-                    for (let i = 0; i < draggedIndex - index; i++) {
-                      moveElement(draggedElement.id, 'up');
-                    }
+                  // Create new array with reordered elements
+                  const newElements = [...elements];
+                  const [draggedItem] = newElements.splice(draggedIndex, 1);
+                  newElements.splice(index, 0, draggedItem);
+                  
+                  // Calculate how many moves needed
+                  const moveCount = Math.abs(draggedIndex - index);
+                  const direction = draggedIndex < index ? 'down' : 'up';
+                  const elementId = elements[draggedIndex].id;
+                  
+                  // Perform the moves
+                  for (let i = 0; i < moveCount; i++) {
+                    moveElement(elementId, direction);
                   }
                 }
                 setDraggedIndex(null);
