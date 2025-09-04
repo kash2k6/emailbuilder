@@ -6,7 +6,7 @@ import { useEmailBuilder } from "@/hooks/use-email-builder";
 import { useDragDropContext } from "@/lib/drag-drop-context";
 import { 
   Type, 
-  MousePointer, 
+  MousePointer2, 
   Image, 
   Minus, 
   ArrowUpDown, 
@@ -29,7 +29,7 @@ const COMPONENT_TYPES = [
     type: 'button' as const,
     name: 'Button',
     description: 'Call-to-action button',
-    icon: MousePointer,
+    icon: MousePointer2,
     color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300'
   },
   {
@@ -144,15 +144,13 @@ export function ComponentPalette() {
           return (
             <Card
               key={component.type}
-              className={cn(
-                "cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200 hover:-translate-y-0.5",
-                createDragSource(component.type, {
-                  onDragStart: () => console.log(`Dragging ${component.type}`),
-                  onDragEnd: () => console.log(`Finished dragging ${component.type}`)
-                })
-              )}
+              className="cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
               onClick={() => handleComponentClick(component.type)}
               data-testid={`component-${component.type}`}
+              {...createDragSource(component.type, {
+                onDragStart: () => console.log(`Dragging ${component.type}`),
+                onDragEnd: () => console.log(`Finished dragging ${component.type}`)
+              })}
             >
               <CardContent className="p-3">
                 <div className="flex items-center gap-3">
