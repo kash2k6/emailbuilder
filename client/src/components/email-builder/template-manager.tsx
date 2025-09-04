@@ -48,7 +48,7 @@ export function TemplateManager() {
     queryKey: ['/api/templates'],
   });
 
-  const templates = templatesResponse?.data || [];
+  const templates = (templatesResponse as any)?.data || [];
 
   // Save template mutation
   const saveTemplateMutation = useMutation({
@@ -222,13 +222,13 @@ export function TemplateManager() {
         <Badge variant="default" className="cursor-pointer">
           All Templates
         </Badge>
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <Badge 
-            key={category} 
+            key={index} 
             variant="secondary" 
             className="cursor-pointer hover:bg-secondary/80"
           >
-            {category}
+            {String(category)}
           </Badge>
         ))}
       </div>

@@ -58,12 +58,12 @@ export function useEmailBuilder() {
 
   // Load draft data when available
   useEffect(() => {
-    if (draftData?.data) {
+    if (draftData && 'success' in draftData && draftData.success && 'data' in draftData && draftData.data) {
       setState(prev => ({
         ...prev,
-        elements: draftData.data.elements || [],
-        subject: draftData.data.subject || '',
-        emailWidth: draftData.data.emailWidth || 600,
+        elements: (draftData.data as any).elements || [],
+        subject: (draftData.data as any).subject || '',
+        emailWidth: (draftData.data as any).emailWidth || 600,
       }));
     }
   }, [draftData]);
@@ -83,16 +83,16 @@ export function useEmailBuilder() {
     [saveDraftMutation]
   );
 
-  // Auto-save when state changes
-  useEffect(() => {
-    if (state.elements.length > 0 || state.subject) {
-      debouncedSave({
-        elements: state.elements,
-        subject: state.subject,
-        emailWidth: state.emailWidth,
-      });
-    }
-  }, [state.elements, state.subject, state.emailWidth, debouncedSave]);
+  // Auto-save when state changes (disabled to prevent infinite loop)
+  // useEffect(() => {
+  //   if (state.elements.length > 0 || state.subject) {
+  //     debouncedSave({
+  //       elements: state.elements,
+  //       subject: state.subject,
+  //       emailWidth: state.emailWidth,
+  //     });
+  //   }
+  // }, [state.elements, state.subject, state.emailWidth, debouncedSave]);
 
   // Generate unique ID for new elements
   const generateId = () => `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

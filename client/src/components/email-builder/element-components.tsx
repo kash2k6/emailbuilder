@@ -195,7 +195,7 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     return (
       <div
         style={{
-          textAlign: styles.textAlign as any || 'center',
+          textAlign: (styles.textAlign as any) || 'center',
           margin: styles.margin || '20px 0',
         }}
         data-testid="preview-social"
