@@ -87,7 +87,12 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
   switch (element.type) {
     case 'text':
     case 'header':
-      // Use table-based approach for reliable email client support
+      // Gmail-compatible table structure with spacer cells for padding
+      const topPadding = parseInt(safeStyles.paddingTop) || 16;
+      const bottomPadding = parseInt(safeStyles.paddingBottom) || 16;
+      const leftPadding = parseInt(safeStyles.paddingLeft) || 24;
+      const rightPadding = parseInt(safeStyles.paddingRight) || 24;
+      
       return (
         <table border={0} cellSpacing={0} cellPadding={0} style={{ 
           width: '100%',
@@ -95,14 +100,20 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           marginBottom: safeStyles.marginBottom,
           marginLeft: safeStyles.marginLeft,
           marginRight: safeStyles.marginRight,
+          backgroundColor: safeStyles.backgroundColor,
         }}>
+          {/* Top spacer row */}
           <tr>
+            <td style={{ 
+              height: `${topPadding}px`, 
+              lineHeight: `${topPadding}px`, 
+              fontSize: '1px' 
+            }}>&nbsp;</td>
+          </tr>
+          {/* Content row with left/right spacers */}
+          <tr>
+            <td style={{ width: `${leftPadding}px` }}>&nbsp;</td>
             <td style={{
-              paddingTop: safeStyles.paddingTop,
-              paddingBottom: safeStyles.paddingBottom,
-              paddingLeft: safeStyles.paddingLeft,
-              paddingRight: safeStyles.paddingRight,
-              backgroundColor: safeStyles.backgroundColor,
               fontSize: safeStyles.fontSize,
               color: safeStyles.color,
               fontFamily: safeStyles.fontFamily,
@@ -112,6 +123,15 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
             }} dangerouslySetInnerHTML={{
               __html: processTextWithMarkdown(element.content)
             }} />
+            <td style={{ width: `${rightPadding}px` }}>&nbsp;</td>
+          </tr>
+          {/* Bottom spacer row */}
+          <tr>
+            <td style={{ 
+              height: `${bottomPadding}px`, 
+              lineHeight: `${bottomPadding}px`, 
+              fontSize: '1px' 
+            }}>&nbsp;</td>
           </tr>
         </table>
       );
