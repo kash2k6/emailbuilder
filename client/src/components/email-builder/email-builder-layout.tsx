@@ -33,8 +33,10 @@ import {
   Settings,
   Smartphone,
   Monitor,
-  FolderOpen
+  FolderOpen,
+  Loader2
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export function EmailBuilderLayout() {
@@ -48,6 +50,9 @@ export function EmailBuilderLayout() {
   const [showLoadDialog, setShowLoadDialog] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [templateDescription, setTemplateDescription] = useState('');
+  const [testEmail, setTestEmail] = useState("");
+  const [testSubject, setTestSubject] = useState("Test Email from Email Builder");
+  const [isSending, setIsSending] = useState(false);
 
   const {
     elements,
@@ -59,17 +64,57 @@ export function EmailBuilderLayout() {
     generateHTML,
     saveDraft,
     isSaving,
-    lastSaved
+    lastSaved,
+    emailBackground
   } = useEmailBuilder();
 
-  const handleSend = async () => {
+  const { toast } = useToast();
+
+  const handleSendTestEmail = async () => {
+    if (!testEmail || !elements || elements.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please enter an email address and add some elements to your email",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSending(true);
     try {
-      const { html, text } = await generateHTML();
-      // Here you would integrate with your email sending service (Resend)
-      console.log('Sending email:', { subject, html, text });
-      setShowSendDialog(false);
-    } catch (error) {
-      console.error('Failed to send email:', error);
+      const response = await fetch('/api/send-test-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: testEmail,
+          subject: testSubject,
+          elements: elements,
+          emailWidth: emailWidth,
+          emailBackground: emailBackground
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({
+          title: "Email sent!",
+          description: `Test email sent successfully to ${testEmail}`,
+        });
+        setShowSendDialog(false);
+      } else {
+        throw new Error(result.error || 'Failed to send email');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error sending email",
+        description: error.message || "Failed to send test email",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -164,35 +209,43 @@ export function EmailBuilderLayout() {
               <DialogTrigger asChild>
                 <Button size="sm" data-testid="button-send">
                   <Send className="h-4 w-4 mr-2" />
-                  {!isMobile && "Send"}
+                  {!isMobile && "Send Test"}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Send Email Campaign</DialogTitle>
+                  <DialogTitle>Send Test Email</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Select Audience</label>
-                    <Select>
-                      <SelectTrigger data-testid="select-audience">
-                        <SelectValue placeholder="Choose your audience" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="newsletter">Newsletter Subscribers (2,847)</SelectItem>
-                        <SelectItem value="premium">Premium Users (456)</SelectItem>
-                        <SelectItem value="new">New Signups (189)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <label className="text-sm font-medium mb-2 block">Subject</label>
+                    <Input
+                      type="text"
+                      value={testSubject}
+                      onChange={(e) => setTestSubject(e.target.value)}
+                      placeholder="Test Email Subject"
+                      data-testid="input-test-subject-dialog"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Send to Email</label>
+                    <Input
+                      type="email"
+                      value={testEmail}
+                      onChange={(e) => setTestEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      data-testid="input-test-email-dialog"
+                    />
                   </div>
                   
                   <div className="bg-muted/50 p-4 rounded-lg">
                     <div className="flex items-center gap-2 text-sm">
                       <Mail className="h-4 w-4 text-primary" />
-                      <span className="font-medium">Ready to send</span>
+                      <span className="font-medium">Ready to send test</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Your email will be optimized for all email clients.
+                      Preview your email in real email clients like Gmail, Outlook, and Apple Mail.
                     </p>
                   </div>
                 </div>
@@ -200,9 +253,23 @@ export function EmailBuilderLayout() {
                   <Button variant="outline" onClick={() => setShowSendDialog(false)} className="flex-1">
                     Cancel
                   </Button>
-                  <Button onClick={handleSend} className="flex-1" data-testid="button-confirm-send">
-                    <Send className="h-4 w-4 mr-2" />
-                    Send Email
+                  <Button 
+                    onClick={handleSendTestEmail} 
+                    disabled={isSending || !testEmail || elements.length === 0}
+                    className="flex-1" 
+                    data-testid="button-confirm-send"
+                  >
+                    {isSending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4 mr-2" />
+                        Send Test Email
+                      </>
+                    )}
                   </Button>
                 </div>
               </DialogContent>
