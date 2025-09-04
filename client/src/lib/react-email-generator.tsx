@@ -83,14 +83,14 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       const finalPaddingX = styles.paddingX || defaultX;
       
       return (
-        <div style={{ 
+        <Section style={{ 
           textAlign: properties.alignment || 'center', 
           marginTop: styles.marginTop || '20px',
           marginBottom: styles.marginBottom || '20px',
-          paddingLeft: styles.paddingX || '0px',
-          paddingRight: styles.paddingX || '0px'
+          paddingLeft: styles.paddingX || '20px',
+          paddingRight: styles.paddingX || '20px'
         }}>
-          <Link 
+          <Button 
             href={buttonUrl}
             style={{
               backgroundColor: styles.backgroundColor || '#ef4444',
@@ -100,19 +100,19 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
               fontSize: styles.fontSize || sizeStyles.fontSize,
               fontWeight: styles.fontWeight || '600',
               textDecoration: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              width: properties.fullWidth ? '100%' : 'auto',
               display: 'inline-block',
               lineHeight: '1.5',
-              boxSizing: 'border-box',
-              msoHide: 'all',
-              WebkitTextSizeAdjust: 'none'
+              fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+              border: 'none',
+              cursor: 'pointer',
+              textAlign: 'center',
+              width: properties.fullWidth ? '100%' : 'auto',
+              minWidth: '120px'
             }}
           >
             {buttonText}
-          </Link>
-        </div>
+          </Button>
+        </Section>
       );
 
     case 'image':
