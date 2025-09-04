@@ -47,7 +47,12 @@ export function ElementComponents({ element }: ElementComponentsProps) {
           textAlign: styles.textAlign as any || 'left',
           lineHeight: styles.lineHeight || '1.6',
           fontWeight: styles.fontWeight || 'normal',
-          margin: styles.margin || '0',
+          marginTop: styles.marginTop || '16px',
+          marginBottom: styles.marginBottom || '16px',
+          paddingLeft: styles.paddingX || '0px',
+          paddingRight: styles.paddingX || '0px',
+          paddingTop: styles.paddingY || '0px',
+          paddingBottom: styles.paddingY || '0px',
           cursor: 'pointer',
           borderRadius: '4px',
           transition: 'all 0.2s ease',
@@ -93,7 +98,8 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       <div 
         style={{ 
           textAlign: properties.alignment || 'center',
-          margin: styles.margin || '20px 0'
+          marginTop: styles.marginTop || '20px',
+          marginBottom: styles.marginBottom || '20px'
         }}
         className={cn(
           "p-2 -m-2 rounded transition-all duration-200 hover:bg-muted/20",
@@ -139,7 +145,12 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       <div 
         style={{ 
           textAlign: 'center',
-          margin: styles.margin || '20px 0'
+          marginTop: styles.marginTop || '20px',
+          marginBottom: styles.marginBottom || '20px',
+          paddingLeft: styles.paddingX || '0px',
+          paddingRight: styles.paddingX || '0px',
+          paddingTop: styles.paddingY || '0px',
+          paddingBottom: styles.paddingY || '0px'
         }}
         className={cn(
           "p-2 -m-2 rounded transition-all duration-200 hover:bg-muted/20 cursor-pointer",
@@ -188,8 +199,10 @@ export function ElementComponents({ element }: ElementComponentsProps) {
         <hr
           style={{
             border: 'none',
-            borderTop: styles.borderTop || '1px solid hsl(var(--border))',
-            margin: styles.margin || '20px 0',
+            borderTop: `${styles.height || '1px'} solid ${styles.borderColor || 'hsl(var(--border))'}`,
+            width: styles.width || '100%',
+            marginTop: styles.marginTop || '20px',
+            marginBottom: styles.marginBottom || '20px',
             backgroundColor: 'transparent',
           }}
           data-testid="preview-divider"
@@ -378,7 +391,12 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       <div
         style={{
           textAlign: (styles.textAlign as any) || 'center',
-          margin: styles.margin || '20px 0',
+          marginTop: styles.marginTop || '20px',
+          marginBottom: styles.marginBottom || '20px',
+          paddingLeft: styles.paddingX || '20px',
+          paddingRight: styles.paddingX || '20px',
+          paddingTop: styles.paddingY || '0px',
+          paddingBottom: styles.paddingY || '0px',
           cursor: 'pointer',
         }}
         className={cn(
