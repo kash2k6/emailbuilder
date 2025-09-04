@@ -79,23 +79,23 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       const defaultY = paddingParts[0] || '12px';
       const defaultX = paddingParts[1] || paddingParts[0] || '24px';
       
-      const finalPaddingY = styles.paddingY || defaultY;
-      const finalPaddingX = styles.paddingX || defaultX;
+      const finalPaddingY = (styles && styles.paddingY) || defaultY;
+      const finalPaddingX = (styles && styles.paddingX) || defaultX;
       
-      // Gmail-compatible table-based button
-      const buttonBgColor = styles.backgroundColor || '#ef4444';
-      const buttonTextColor = styles.color || '#ffffff';
-      const buttonBorderRadius = styles.borderRadius || '6px';
+      // Gmail-compatible table-based button with guaranteed defaults
+      const buttonBgColor = (styles && styles.backgroundColor) || '#ef4444';
+      const buttonTextColor = (styles && styles.color) || '#ffffff';
+      const buttonBorderRadius = (styles && styles.borderRadius) || '6px';
       
       const isFullWidth = properties.fullWidth;
       
       // Check if we're inside a column by reducing Section wrapper conflicts
       const wrapperStyle = {
         textAlign: properties.alignment || 'center', 
-        marginTop: styles.marginTop || '20px',
-        marginBottom: styles.marginBottom || '20px',
-        paddingLeft: styles.paddingX || '0px',
-        paddingRight: styles.paddingX || '0px',
+        marginTop: (styles && styles.marginTop) || '20px',
+        marginBottom: (styles && styles.marginBottom) || '20px',
+        paddingLeft: (styles && styles.paddingX) || '0px',
+        paddingRight: (styles && styles.paddingX) || '0px',
         width: '100%'
       };
       
@@ -114,8 +114,8 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
                     color: buttonTextColor,
                     borderRadius: buttonBorderRadius,
                     padding: `${finalPaddingY} ${finalPaddingX}`,
-                    fontSize: styles.fontSize || sizeStyles.fontSize,
-                    fontWeight: styles.fontWeight || '600',
+                    fontSize: (styles && styles.fontSize) || sizeStyles.fontSize,
+                    fontWeight: (styles && styles.fontWeight) || '600',
                     textDecoration: 'none',
                     fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
                     display: 'block',
