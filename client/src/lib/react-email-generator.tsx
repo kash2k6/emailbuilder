@@ -60,15 +60,22 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
     return (value !== undefined && value !== null && value !== '') ? value : defaultValue;
   };
   
+  // Map UI style properties to email-compatible properties
   const safeStyles = {
     fontSize: getDefaultValue(styles.fontSize, '16px'),
     fontFamily: getDefaultValue(styles.fontFamily, 'Inter, system-ui, sans-serif'),
     color: getDefaultValue(styles.color, element.type === 'button' ? '#ffffff' : '#1f2937'),
     backgroundColor: getDefaultValue(styles.backgroundColor, element.type === 'button' ? '#ef4444' : 'transparent'),
-    marginTop: getDefaultValue(styles.marginTop, '16px'),
-    marginBottom: getDefaultValue(styles.marginBottom, '16px'),
-    paddingX: getDefaultValue(styles.paddingX, '20px'),
-    paddingY: getDefaultValue(styles.paddingY, '0px'),
+    // Handle margin properties properly
+    marginTop: getDefaultValue(styles.marginTop || styles.topMargin, '16px'),
+    marginBottom: getDefaultValue(styles.marginBottom || styles.bottomMargin, '16px'),
+    marginLeft: getDefaultValue(styles.marginLeft || styles.leftMargin, '0px'),
+    marginRight: getDefaultValue(styles.marginRight || styles.rightMargin, '0px'),
+    // Handle padding properties properly  
+    paddingTop: getDefaultValue(styles.paddingTop || styles.topPadding || styles.paddingY, '0px'),
+    paddingBottom: getDefaultValue(styles.paddingBottom || styles.bottomPadding || styles.paddingY, '0px'),
+    paddingLeft: getDefaultValue(styles.paddingLeft || styles.leftPadding || styles.paddingX, '20px'),
+    paddingRight: getDefaultValue(styles.paddingRight || styles.rightPadding || styles.paddingX, '20px'),
     textAlign: getDefaultValue(styles.textAlign, element.type === 'button' ? 'center' : 'left'),
     fontWeight: getDefaultValue(styles.fontWeight, element.type === 'button' ? '600' : 'normal'),
     borderRadius: getDefaultValue(styles.borderRadius, element.type === 'button' ? '6px' : '0px'),
@@ -86,14 +93,17 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           color: safeStyles.color,
           fontFamily: safeStyles.fontFamily,
           textAlign: safeStyles.textAlign as any,
-          lineHeight: styles.lineHeight || '1.6',
+          lineHeight: safeStyles.lineHeight,
           fontWeight: safeStyles.fontWeight,
           marginTop: safeStyles.marginTop,
           marginBottom: safeStyles.marginBottom,
-          paddingLeft: safeStyles.paddingX,
-          paddingRight: safeStyles.paddingX,
-          paddingTop: safeStyles.paddingY,
-          paddingBottom: safeStyles.paddingY,
+          marginLeft: safeStyles.marginLeft,
+          marginRight: safeStyles.marginRight,
+          paddingTop: safeStyles.paddingTop,
+          paddingBottom: safeStyles.paddingBottom,
+          paddingLeft: safeStyles.paddingLeft,
+          paddingRight: safeStyles.paddingRight,
+          backgroundColor: safeStyles.backgroundColor,
         }} dangerouslySetInnerHTML={{
           __html: processTextWithMarkdown(element.content)
         }} />
@@ -445,19 +455,25 @@ export function EmailTemplate({
         WebkitTextSizeAdjust: '100%',
         color: '#333333'
       }}>
-        <Container style={{
+        <div style={{
           backgroundColor: '#f8fafc',
-          padding: '20px 0'
+          padding: '20px 0',
+          width: '100%'
         }}>
-          <Container style={getContainerStyle()}>
+          <div style={{
+            ...getContainerStyle(),
+            width: `${emailWidth}px`,
+            maxWidth: `${emailWidth}px`
+          }}>
             {elements.map((element) => (
               <ElementToReactEmail key={element.id} element={element} />
             ))}
-          </Container>
+          </div>
           
           {/* Footer notice */}
-          <Container style={{
+          <div style={{
             maxWidth: `${emailWidth}px`,
+            width: `${emailWidth}px`,
             margin: '20px auto 0',
             textAlign: 'center',
             fontSize: '12px',
@@ -469,8 +485,8 @@ export function EmailTemplate({
               <Link href="#" style={{ color: '#6366f1', textDecoration: 'none' }}>Unsubscribe</Link> | 
               <Link href="#" style={{ color: '#6366f1', textDecoration: 'none' }}>View in browser</Link>
             </Text>
-          </Container>
-        </Container>
+          </div>
+        </div>
       </Body>
     </Html>
   );
