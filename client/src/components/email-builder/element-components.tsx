@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useDragDropContext } from "@/lib/drag-drop-context";
 import { useEmailBuilder } from "@/contexts/email-builder-context";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook, faTwitter, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 
 interface ElementComponentsProps {
   element: EmailElement;
@@ -238,13 +240,14 @@ export function ElementComponents({ element }: ElementComponentsProps) {
 
   const renderSocialElement = () => {
     const styles = element.styles || {};
+    const properties = element.properties || {};
     
     const socialLinks = [
-      { name: 'Facebook', icon: '📘', url: '#' },
-      { name: 'Twitter', icon: '🐦', url: '#' },
-      { name: 'Instagram', icon: '📷', url: '#' },
-      { name: 'LinkedIn', icon: '💼', url: '#' },
-    ];
+      { name: 'Facebook', icon: faFacebook, url: properties.facebook || '', color: '#1877F2' },
+      { name: 'Twitter', icon: faTwitter, url: properties.twitter || '', color: '#1DA1F2' },
+      { name: 'Instagram', icon: faInstagram, url: properties.instagram || '', color: '#E4405F' },
+      { name: 'LinkedIn', icon: faLinkedin, url: properties.linkedin || '', color: '#0A66C2' },
+    ].filter(social => social.url);
 
     return (
       <div
@@ -259,12 +262,16 @@ export function ElementComponents({ element }: ElementComponentsProps) {
             <a
               key={social.name}
               href={social.url}
-              className="text-2xl hover:opacity-75 transition-opacity"
+              className="hover:opacity-75 transition-all duration-200 hover:scale-110"
               title={social.name}
+              style={{ color: styles.iconColor || social.color }}
             >
-              {social.icon}
+              <FontAwesomeIcon icon={social.icon} size="2x" />
             </a>
           ))}
+          {socialLinks.length === 0 && (
+            <span className="text-muted-foreground text-sm">Add social media links in properties</span>
+          )}
         </div>
       </div>
     );
@@ -289,10 +296,18 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       >
         <div className="space-y-3">
           <div className="flex justify-center gap-4 mb-3">
-            <a href="#" className="hover:text-primary">📘</a>
-            <a href="#" className="hover:text-primary">🐦</a>
-            <a href="#" className="hover:text-primary">📷</a>
-            <a href="#" className="hover:text-primary">💼</a>
+            <a href="#" className="hover:opacity-75 transition-opacity" style={{ color: '#1877F2' }}>
+              <FontAwesomeIcon icon={faFacebook} size="lg" />
+            </a>
+            <a href="#" className="hover:opacity-75 transition-opacity" style={{ color: '#1DA1F2' }}>
+              <FontAwesomeIcon icon={faTwitter} size="lg" />
+            </a>
+            <a href="#" className="hover:opacity-75 transition-opacity" style={{ color: '#E4405F' }}>
+              <FontAwesomeIcon icon={faInstagram} size="lg" />
+            </a>
+            <a href="#" className="hover:opacity-75 transition-opacity" style={{ color: '#0A66C2' }}>
+              <FontAwesomeIcon icon={faLinkedin} size="lg" />
+            </a>
           </div>
           <p>© 2024 Your Company. All rights reserved.</p>
           <p className="text-xs space-x-2">

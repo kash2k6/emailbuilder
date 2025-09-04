@@ -3,12 +3,15 @@ import { useDragDropContext } from "@/lib/drag-drop-context";
 import { ElementComponents } from "./element-components";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Hand, Plus, Copy, Trash2, ChevronUp, ChevronDown } from "lucide-react";
+import { Hand, Plus, Copy, Trash2, ChevronUp, ChevronDown, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export function EmailCanvas() {
   const { elements, addElement, selectedElement, selectElement, deleteElement, duplicateElement, moveElement } = useEmailBuilder();
   const { createDropTarget, isDragActive } = useDragDropContext();
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const handleDrop = (componentType: string) => {
     addElement(componentType as any);
@@ -61,16 +64,61 @@ export function EmailCanvas() {
               className={cn(
                 "group relative rounded-md transition-all duration-200",
                 "hover:bg-blue-50/50 dark:hover:bg-blue-950/20",
-                selectedElement?.id === element.id && "ring-2 ring-primary"
+                selectedElement?.id === element.id && "ring-2 ring-primary",
+                draggedIndex === index && "opacity-50",
+                dragOverIndex === index && "border-t-4 border-primary"
               )}
               onClick={(e) => {
                 e.stopPropagation();
                 selectElement(element.id);
               }}
+              draggable
+              onDragStart={(e) => {
+                setDraggedIndex(index);
+                e.dataTransfer.effectAllowed = 'move';
+              }}
+              onDragEnd={() => {
+                setDraggedIndex(null);
+                setDragOverIndex(null);
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (draggedIndex !== null && draggedIndex !== index) {
+                  setDragOverIndex(index);
+                }
+              }}
+              onDragLeave={() => {
+                setDragOverIndex(null);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (draggedIndex !== null && draggedIndex !== index) {
+                  const draggedElement = elements[draggedIndex];
+                  if (draggedIndex < index) {
+                    // Moving down
+                    for (let i = 0; i < index - draggedIndex; i++) {
+                      moveElement(draggedElement.id, 'down');
+                    }
+                  } else {
+                    // Moving up  
+                    for (let i = 0; i < draggedIndex - index; i++) {
+                      moveElement(draggedElement.id, 'up');
+                    }
+                  }
+                }
+                setDraggedIndex(null);
+                setDragOverIndex(null);
+              }}
               data-testid={`element-${element.type}-${element.id}`}
             >
+              {/* Drag Handle */}
+              <div className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-move">
+                <GripVertical className="h-5 w-5 text-muted-foreground" />
+              </div>
+
               {/* Element Label */}
-              <div className="absolute -top-2 -left-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+              <div className="absolute -top-2 left-8 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                 <div className="bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-medium capitalize">
                   {element.type}
                 </div>
