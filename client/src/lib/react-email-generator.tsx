@@ -83,12 +83,12 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       const finalPaddingX = styles.paddingX || defaultX;
       
       return (
-        <Section style={{ 
+        <div style={{ 
           textAlign: properties.alignment || 'center', 
           marginTop: styles.marginTop || '20px',
           marginBottom: styles.marginBottom || '20px',
-          paddingLeft: styles.paddingX || '20px',
-          paddingRight: styles.paddingX || '20px'
+          paddingLeft: styles.paddingX || '0px',
+          paddingRight: styles.paddingX || '0px'
         }}>
           <Button 
             href={buttonUrl}
@@ -110,7 +110,7 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           >
             {buttonText}
           </Button>
-        </Section>
+        </div>
       );
 
     case 'image':
@@ -175,14 +175,31 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       const rightChildren = element.rightChildren || [];
       
       return (
-        <Section style={{ margin: '20px 0', padding: '0 20px' }}>
+        <Section style={{ 
+          marginTop: styles.marginTop || '20px',
+          marginBottom: styles.marginBottom || '20px',
+          paddingLeft: styles.paddingX || '20px',
+          paddingRight: styles.paddingX || '20px'
+        }}>
           <Row>
-            <Column style={{ width: '50%', verticalAlign: 'top', paddingRight: '10px' }}>
+            <Column style={{ 
+              width: '50%', 
+              verticalAlign: 'top', 
+              paddingRight: '10px',
+              paddingTop: '0',
+              paddingBottom: '0'
+            }}>
               {leftChildren.map((child) => (
                 <ElementToReactEmail key={child.id} element={child} />
               ))}
             </Column>
-            <Column style={{ width: '50%', verticalAlign: 'top', paddingLeft: '10px' }}>
+            <Column style={{ 
+              width: '50%', 
+              verticalAlign: 'top', 
+              paddingLeft: '10px',
+              paddingTop: '0',
+              paddingBottom: '0'
+            }}>
               {rightChildren.map((child) => (
                 <ElementToReactEmail key={child.id} element={child} />
               ))}
