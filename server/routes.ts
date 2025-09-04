@@ -141,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Email HTML generation endpoint
+  // Email HTML generation endpoint (React.email compatible)
   app.post("/api/generate-email-html", async (req, res) => {
     try {
       const { elements, subject, emailWidth = 600, emailBackground } = req.body;
@@ -150,9 +150,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ success: false, error: "Elements array is required" });
       }
 
-      // Generate email-compatible HTML using the imported function
-      const { generateEmailHTML } = await import('../client/src/lib/email-html-generator.js');
-      const { html: htmlContent, text: textContent } = generateEmailHTML(elements, subject, { 
+      // Generate email-compatible HTML using React.email components
+      const { generateReactEmail } = await import('../client/src/lib/react-email-generator.js');
+      const { html: htmlContent, text: textContent } = await generateReactEmail(elements, subject, { 
         emailWidth, 
         emailBackground 
       });
@@ -165,6 +165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } 
       });
     } catch (error) {
+      console.error('Email generation error:', error);
       res.status(500).json({ success: false, error: "Failed to generate email HTML" });
     }
   });
