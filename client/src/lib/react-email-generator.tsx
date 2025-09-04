@@ -73,22 +73,29 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       
       const sizeStyles = getSizeStyles(properties.size || 'medium');
       
+      // Calculate final padding values safely
+      const defaultPadding = sizeStyles.padding || '12px 24px';
+      const paddingParts = defaultPadding.split(' ');
+      const defaultY = paddingParts[0] || '12px';
+      const defaultX = paddingParts[1] || paddingParts[0] || '24px';
+      
+      const finalPaddingY = styles.paddingY || defaultY;
+      const finalPaddingX = styles.paddingX || defaultX;
+      
       return (
         <Section style={{ 
           textAlign: properties.alignment || 'center', 
           marginTop: styles.marginTop || '20px',
-          marginBottom: styles.marginBottom || '20px'
+          marginBottom: styles.marginBottom || '20px',
+          paddingLeft: styles.paddingX || '20px',
+          paddingRight: styles.paddingX || '20px'
         }}>
           <Button 
             href={buttonUrl}
             style={{
-              backgroundColor: styles.backgroundColor || '#3b82f6',
+              backgroundColor: styles.backgroundColor || '#ef4444',
               color: styles.color || '#ffffff',
-              padding: styles.padding || sizeStyles.padding,
-              paddingLeft: styles.paddingX || sizeStyles.padding,
-              paddingRight: styles.paddingX || sizeStyles.padding,
-              paddingTop: styles.paddingY || sizeStyles.padding,
-              paddingBottom: styles.paddingY || sizeStyles.padding,
+              padding: `${finalPaddingY} ${finalPaddingX}`,
               borderRadius: styles.borderRadius || '6px',
               fontSize: styles.fontSize || sizeStyles.fontSize,
               fontWeight: styles.fontWeight || '600',
@@ -97,6 +104,8 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
               cursor: 'pointer',
               width: properties.fullWidth ? '100%' : 'auto',
               display: 'inline-block',
+              lineHeight: '1.5',
+              boxSizing: 'border-box'
             }}
           >
             {buttonText}
