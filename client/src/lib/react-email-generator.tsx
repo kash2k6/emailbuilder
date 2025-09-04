@@ -90,7 +90,7 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           paddingLeft: styles.paddingX || '0px',
           paddingRight: styles.paddingX || '0px'
         }}>
-          <Button 
+          <Link 
             href={buttonUrl}
             style={{
               backgroundColor: styles.backgroundColor || '#ef4444',
@@ -105,11 +105,13 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
               width: properties.fullWidth ? '100%' : 'auto',
               display: 'inline-block',
               lineHeight: '1.5',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              msoHide: 'all',
+              WebkitTextSizeAdjust: 'none'
             }}
           >
             {buttonText}
-          </Button>
+          </Link>
         </div>
       );
 
