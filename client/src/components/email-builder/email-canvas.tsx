@@ -11,14 +11,11 @@ export function EmailCanvas() {
   const { createDropTarget, isDragActive } = useDragDropContext();
 
   const handleDrop = (componentType: string) => {
-    console.log('Canvas: handleDrop called with:', componentType);
     addElement(componentType as any);
   };
 
   const dropTargetProps = createDropTarget({
     onDrop: handleDrop,
-    onDragOver: () => console.log('Dragging over canvas'),
-    onDragLeave: () => console.log('Drag left canvas'),
     // Remove accepts filter to allow all component types
   });
 
@@ -43,7 +40,9 @@ export function EmailCanvas() {
               Drag components from the left panel or click the button below to begin
             </p>
             <Button
-              onClick={() => addElement('text')}
+              onClick={() => {
+                addElement('text');
+              }}
               variant="outline"
               className="gap-2"
               data-testid="button-add-first-element"
@@ -66,7 +65,6 @@ export function EmailCanvas() {
               )}
               onClick={(e) => {
                 e.stopPropagation();
-                console.log('Canvas: Clicking element:', element.id, element.type);
                 selectElement(element.id);
               }}
               data-testid={`element-${element.type}-${element.id}`}

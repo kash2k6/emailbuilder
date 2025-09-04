@@ -148,8 +148,6 @@ export function ComponentPalette() {
               onClick={() => handleComponentClick(component.type)}
               data-testid={`component-${component.type}`}
               {...createDragSource(component.type, {
-                onDragStart: () => console.log(`Dragging ${component.type}`),
-                onDragEnd: () => console.log(`Finished dragging ${component.type}`)
               })}
             >
               <CardContent className="p-3">

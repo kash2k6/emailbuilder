@@ -45,7 +45,6 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
   });
 
   const startDrag = useCallback((type: string, item?: any) => {
-    console.log('DragDrop: Starting drag:', type);
     setState({
       isDragActive: true,
       draggedItem: item,
@@ -54,7 +53,6 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const endDrag = useCallback(() => {
-    console.log('DragDrop: Ending drag');
     setState({
       isDragActive: false,
       draggedItem: null,
@@ -66,10 +64,13 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
     return {
       draggable: true,
       onDragStart: (e: React.DragEvent) => {
-        console.log('DragSource: Starting drag with type:', type);
         e.dataTransfer.effectAllowed = 'copy';
-        e.dataTransfer.setData('text/plain', type);
-        e.dataTransfer.setData('application/json', JSON.stringify({ type, data: options.data }));
+        // Ensure type is properly set
+        if (type) {
+          e.dataTransfer.setData('text/plain', type);
+          e.dataTransfer.setData('componentType', type); // Add additional data format
+          e.dataTransfer.setData('application/json', JSON.stringify({ type, data: options.data }));
+        }
         
         startDrag(type, options.data);
         options.onDragStart?.();
@@ -112,27 +113,38 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
       onDrop: (e: React.DragEvent) => {
         e.preventDefault();
         
-        const type = e.dataTransfer.getData('text/plain');
-        console.log('DragDrop: Drop event, type:', type);
+        // Try multiple ways to get the type
+        let type = e.dataTransfer.getData('text/plain');
+        if (!type) {
+          type = e.dataTransfer.getData('componentType');
+        }
+        
         let data = null;
         
         try {
           const jsonData = e.dataTransfer.getData('application/json');
           if (jsonData) {
             const parsed = JSON.parse(jsonData);
+            if (parsed.type && !type) {
+              type = parsed.type;
+            }
             data = parsed.data;
           }
         } catch (error) {
           // Fallback to plain text
         }
         
-        // Check if this drop target accepts the dragged type
-        if (options.accepts && !options.accepts.includes(type)) {
-          console.log('DragDrop: Type not accepted:', type, 'Accepts:', options.accepts);
+        // Don't process if no valid type
+        if (!type || type === '') {
+          endDrag();
           return;
         }
         
-        console.log('DragDrop: Calling onDrop with:', type, data);
+        // Check if this drop target accepts the dragged type
+        if (options.accepts && !options.accepts.includes(type)) {
+          return;
+        }
+        
         options.onDrop(type, data);
         endDrag();
       },
