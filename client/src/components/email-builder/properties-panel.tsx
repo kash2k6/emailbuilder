@@ -41,6 +41,8 @@ export function PropertiesPanel() {
   const [localStyles, setLocalStyles] = useState(selectedElement?.styles || {});
   const [localProperties, setLocalProperties] = useState(selectedElement?.properties || {});
 
+  console.log('PropertiesPanel: selectedElement is:', selectedElement);
+
   // Update local state when selectedElement changes
   useEffect(() => {
     if (selectedElement) {

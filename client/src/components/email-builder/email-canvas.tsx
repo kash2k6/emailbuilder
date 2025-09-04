@@ -11,6 +11,7 @@ export function EmailCanvas() {
   const { createDropTarget, isDragActive } = useDragDropContext();
 
   const handleDrop = (componentType: string) => {
+    console.log('Canvas: handleDrop called with:', componentType);
     addElement(componentType as any);
   };
 
@@ -64,6 +65,7 @@ export function EmailCanvas() {
               )}
               onClick={(e) => {
                 e.stopPropagation();
+                console.log('Canvas: Clicking element:', element.id, element.type);
                 selectElement(element.id);
               }}
               data-testid={`element-${element.type}-${element.id}`}

@@ -45,6 +45,7 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
   });
 
   const startDrag = useCallback((type: string, item?: any) => {
+    console.log('DragDrop: Starting drag:', type);
     setState({
       isDragActive: true,
       draggedItem: item,
@@ -53,6 +54,7 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const endDrag = useCallback(() => {
+    console.log('DragDrop: Ending drag');
     setState({
       isDragActive: false,
       draggedItem: null,
@@ -110,6 +112,7 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
         e.preventDefault();
         
         const type = e.dataTransfer.getData('text/plain');
+        console.log('DragDrop: Drop event, type:', type);
         let data = null;
         
         try {
@@ -124,9 +127,11 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
         
         // Check if this drop target accepts the dragged type
         if (options.accepts && !options.accepts.includes(type)) {
+          console.log('DragDrop: Type not accepted:', type, 'Accepts:', options.accepts);
           return;
         }
         
+        console.log('DragDrop: Calling onDrop with:', type, data);
         options.onDrop(type, data);
         endDrag();
       },

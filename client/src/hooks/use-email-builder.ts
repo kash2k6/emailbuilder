@@ -99,6 +99,7 @@ export function useEmailBuilder() {
 
   // Add new element
   const addElement = useCallback((type: EmailElement['type'], parentId?: string) => {
+    console.log('Hook: addElement called with type:', type, 'parentId:', parentId);
     const newElement: EmailElement = {
       id: generateId(),
       type,
@@ -107,8 +108,10 @@ export function useEmailBuilder() {
       properties: getDefaultProperties(type),
       position: state.elements.length,
     };
+    console.log('Hook: Created newElement:', newElement);
 
     if (parentId) {
+      console.log('Hook: Adding to parent column:', parentId);
       // Add to column
       setState(prev => ({
         ...prev,
@@ -120,12 +123,19 @@ export function useEmailBuilder() {
         selectedElement: newElement,
       }));
     } else {
+      console.log('Hook: Adding to main canvas, current element count:', state.elements.length);
       // Add to main elements
-      setState(prev => ({
-        ...prev,
-        elements: [...prev.elements, newElement],
-        selectedElement: newElement,
-      }));
+      setState(prev => {
+        console.log('Hook: Previous elements:', prev.elements.length);
+        const newState = {
+          ...prev,
+          elements: [...prev.elements, newElement],
+          selectedElement: newElement,
+        };
+        console.log('Hook: New elements count:', newState.elements.length);
+        console.log('Hook: New selectedElement:', newState.selectedElement);
+        return newState;
+      });
     }
 
     toast({
@@ -186,11 +196,17 @@ export function useEmailBuilder() {
 
   // Select element
   const selectElement = useCallback((id: string) => {
+    console.log('Hook: selectElement called with:', id);
+    console.log('Hook: Available elements:', state.elements.map(e => ({ id: e.id, type: e.type })));
     const element = state.elements.find(el => el.id === id);
-    setState(prev => ({
-      ...prev,
-      selectedElement: element || null,
-    }));
+    console.log('Hook: Found element:', element);
+    setState(prev => {
+      console.log('Hook: Setting selectedElement to:', element);
+      return {
+        ...prev,
+        selectedElement: element || null,
+      };
+    });
   }, [state.elements]);
 
   // Move element
