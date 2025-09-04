@@ -66,12 +66,14 @@ export function EmailCanvas() {
           isDragActive && "ring-2 ring-primary ring-offset-2"
         )}
         style={getBackgroundStyle()}
-        {...dropTargetProps}
         data-testid="email-canvas"
       >
       {elements.length === 0 ? (
         /* Empty State */
-        <div className="absolute inset-0 flex items-center justify-center text-center p-8">
+        <div 
+          className="absolute inset-0 flex items-center justify-center text-center p-8"
+          {...dropTargetProps}
+        >
           <div className="text-muted-foreground max-w-sm">
             <Hand className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <h3 className="text-lg font-medium mb-2">Start building your email</h3>
@@ -93,7 +95,10 @@ export function EmailCanvas() {
         </div>
       ) : (
         /* Email Elements */
-        <div className="p-6 space-y-4">
+        <div 
+          className="p-6 space-y-4"
+          {...dropTargetProps}
+        >
           {elements.map((element, index) => (
             <div
               key={element.id}
@@ -121,18 +126,26 @@ export function EmailCanvas() {
               }}
               onDragOver={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 if (draggedIndex !== null && draggedIndex !== index) {
                   setDragOverIndex(index);
+                  e.dataTransfer.dropEffect = 'move';
                 }
               }}
-              onDragLeave={() => {
-                setDragOverIndex(null);
+              onDragLeave={(e) => {
+                // Only clear if actually leaving the element
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                  setDragOverIndex(null);
+                }
               }}
               onDrop={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (draggedIndex !== null && draggedIndex !== index) {
-                  // Use the new reorderElements function for efficient reordering
+                
+                // Check if this is a reorder operation
+                const dragType = e.dataTransfer.getData('text/plain');
+                if (dragType === 'reorder' && draggedIndex !== null && draggedIndex !== index) {
+                  console.log('Reordering from', draggedIndex, 'to', index);
                   reorderElements(draggedIndex, index);
                 }
                 setDraggedIndex(null);
