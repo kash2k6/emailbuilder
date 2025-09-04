@@ -37,17 +37,23 @@ const FONT_OPTIONS = [
 ];
 
 export function PropertiesPanel() {
-  const { selectedElement, updateElement, deleteElement, duplicateElement } = useEmailBuilder();
+  const emailBuilderHook = useEmailBuilder();
+  const { selectedElement, updateElement, deleteElement, duplicateElement } = emailBuilderHook;
   const [localStyles, setLocalStyles] = useState(selectedElement?.styles || {});
   const [localProperties, setLocalProperties] = useState(selectedElement?.properties || {});
 
+  console.log('PropertiesPanel: Hook data:', emailBuilderHook);
   console.log('PropertiesPanel: selectedElement is:', selectedElement);
 
   // Update local state when selectedElement changes
   useEffect(() => {
+    console.log('PropertiesPanel: useEffect triggered, selectedElement:', selectedElement);
     if (selectedElement) {
       setLocalStyles(selectedElement.styles || {});
       setLocalProperties(selectedElement.properties || {});
+    } else {
+      setLocalStyles({});
+      setLocalProperties({});
     }
   }, [selectedElement]);
 

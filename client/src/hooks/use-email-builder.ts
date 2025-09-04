@@ -100,6 +100,13 @@ export function useEmailBuilder() {
   // Add new element
   const addElement = useCallback((type: EmailElement['type'], parentId?: string) => {
     console.log('Hook: addElement called with type:', type, 'parentId:', parentId);
+    
+    // Validate type is not empty
+    if (!type || type === '') {
+      console.error('Hook: Invalid element type received:', type);
+      return;
+    }
+    
     const newElement: EmailElement = {
       id: generateId(),
       type,

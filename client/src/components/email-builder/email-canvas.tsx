@@ -18,7 +18,8 @@ export function EmailCanvas() {
   const dropTargetProps = createDropTarget({
     onDrop: handleDrop,
     onDragOver: () => console.log('Dragging over canvas'),
-    onDragLeave: () => console.log('Drag left canvas')
+    onDragLeave: () => console.log('Drag left canvas'),
+    // Remove accepts filter to allow all component types
   });
 
   return (

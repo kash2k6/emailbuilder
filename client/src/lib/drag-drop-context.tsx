@@ -66,6 +66,7 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
     return {
       draggable: true,
       onDragStart: (e: React.DragEvent) => {
+        console.log('DragSource: Starting drag with type:', type);
         e.dataTransfer.effectAllowed = 'copy';
         e.dataTransfer.setData('text/plain', type);
         e.dataTransfer.setData('application/json', JSON.stringify({ type, data: options.data }));
