@@ -85,18 +85,22 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     const imageAlt = properties.alt || 'Image';
     
     return (
-      <div style={{ textAlign: styles.textAlign || 'center' }}>
+      <div style={{ 
+        textAlign: 'center',
+        margin: styles.margin || '20px 0'
+      }}>
         <img
           src={imageSrc}
           alt={imageAlt}
           style={{
-            maxWidth: '100%',
-            height: properties.height === 'auto' ? 'auto' : properties.height || '200px',
-            width: properties.width || 'auto',
-            borderRadius: styles.borderRadius || '0px',
-            objectFit: properties.objectFit || 'cover',
+            width: '100%',
+            maxWidth: styles.maxWidth || '100%',
+            height: styles.height || 'auto',
+            borderRadius: styles.borderRadius || '8px',
+            objectFit: (styles.objectFit || 'cover') as any,
+            display: 'block',
+            margin: '0 auto',
           }}
-          className="rounded-lg"
           data-testid="preview-image"
         />
       </div>

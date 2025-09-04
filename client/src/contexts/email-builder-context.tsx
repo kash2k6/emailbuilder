@@ -389,10 +389,11 @@ function getDefaultStyles(type: EmailElement['type']): Record<string, any> {
     case 'image':
       return {
         width: '100%',
-        maxWidth: '600px',
+        maxWidth: '100%',
         height: 'auto',
         borderRadius: '8px',
         margin: '20px 0',
+        objectFit: 'cover',
       };
     case 'divider':
       return {
@@ -461,6 +462,8 @@ function getDefaultProperties(type: EmailElement['type']): Record<string, any> {
       return {
         alt: 'Image description',
         url: '',
+        width: '100%',
+        height: 'auto',
       };
     case 'columns':
       return {

@@ -405,37 +405,55 @@ export function PropertiesPanel() {
               <div>
                 <Label className="mb-2 block">Width</Label>
                 <Select
-                  value={localProperties.width || 'auto'}
-                  onValueChange={(value) => handlePropertyChange('width', value)}
+                  value={localStyles.maxWidth || '100%'}
+                  onValueChange={(value) => handleStyleChange('maxWidth', value)}
                 >
                   <SelectTrigger data-testid="select-image-width">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="auto">Auto</SelectItem>
-                    <SelectItem value="100%">100%</SelectItem>
+                    <SelectItem value="100%">Full Width</SelectItem>
+                    <SelectItem value="75%">75%</SelectItem>
                     <SelectItem value="50%">50%</SelectItem>
-                    <SelectItem value="200px">200px</SelectItem>
                     <SelectItem value="300px">300px</SelectItem>
                     <SelectItem value="400px">400px</SelectItem>
+                    <SelectItem value="500px">500px</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
                 <Label className="mb-2 block">Height</Label>
                 <Select
-                  value={localProperties.height || 'auto'}
-                  onValueChange={(value) => handlePropertyChange('height', value)}
+                  value={localStyles.height || 'auto'}
+                  onValueChange={(value) => handleStyleChange('height', value)}
                 >
                   <SelectTrigger data-testid="select-image-height">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="auto">Auto</SelectItem>
+                    <SelectItem value="auto">Auto (maintain aspect ratio)</SelectItem>
                     <SelectItem value="150px">150px</SelectItem>
                     <SelectItem value="200px">200px</SelectItem>
                     <SelectItem value="250px">250px</SelectItem>
                     <SelectItem value="300px">300px</SelectItem>
+                    <SelectItem value="400px">400px</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="mb-2 block">Image Fit</Label>
+                <Select
+                  value={localStyles.objectFit || 'cover'}
+                  onValueChange={(value) => handleStyleChange('objectFit', value)}
+                >
+                  <SelectTrigger data-testid="select-image-fit">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cover">Cover (fills area)</SelectItem>
+                    <SelectItem value="contain">Contain (fits inside)</SelectItem>
+                    <SelectItem value="fill">Fill (stretches)</SelectItem>
+                    <SelectItem value="none">None (original size)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
