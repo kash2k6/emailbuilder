@@ -289,8 +289,8 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
   }
 }
 
-// Main email template component
-function EmailTemplate({ 
+// Main email template component (following official Resend pattern)
+export function EmailTemplate({ 
   elements, 
   subject, 
   options 
@@ -399,6 +399,22 @@ export async function generateReactEmail(
   const text = generateTextContent(elements);
 
   return { html, text };
+}
+
+// Official Resend integration helper (following their exact pattern)
+// Usage: 
+// await resend.emails.send({
+//   from: 'your@domain.com',
+//   to: 'user@example.com',
+//   subject: 'Your Subject',
+//   react: createEmailComponent(elements, subject, options)
+// });
+export function createEmailComponent(
+  elements: EmailElement[],
+  subject: string,
+  options: ReactEmailGenerationOptions = {}
+) {
+  return EmailTemplate({ elements, subject, options });
 }
 
 // Text content generation (same as before)

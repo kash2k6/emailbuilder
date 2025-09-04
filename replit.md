@@ -55,13 +55,14 @@ Currently uses an in-memory storage system with a well-defined interface:
 
 ## Email Generation System
 
-Sophisticated email HTML generation with client compatibility:
+Modern React.email-based email generation following official Resend patterns:
 
-- **Multi-client optimization** (Gmail, Outlook, Apple Mail)
-- **Responsive email layouts** with table-based structure for maximum compatibility
-- **Inline CSS** generation for email client support
-- **Text fallback** generation for plain-text email clients
-- **Template-based HTML** generation with proper email DOCTYPE and meta tags
+- **React.email Components** - Using official `@react-email/components` for maximum compatibility
+- **Official Resend Integration** - Follows exact pattern from Resend documentation
+- **Multi-client optimization** (Gmail, Outlook, Apple Mail) via React.email's tested components
+- **Responsive email layouts** with React.email's responsive primitives
+- **TypeScript Support** - Full type safety with React.email components
+- **Dual Mode Support** - React component export for Resend + HTML preview for testing
 
 ## Component System
 
