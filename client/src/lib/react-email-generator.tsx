@@ -32,24 +32,42 @@ export interface ReactEmailGenerationOptions {
 function ElementToReactEmail({ element }: { element: EmailElement }) {
   const styles = element.styles || {};
   const properties = element.properties || {};
+  
+  // Ensure styles object always exists with proper defaults for all element types
+  const safeStyles = {
+    // Default styles that should apply to all elements
+    fontSize: styles.fontSize || '16px',
+    fontFamily: styles.fontFamily || 'Inter, system-ui, sans-serif',
+    color: styles.color || (element.type === 'button' ? '#ffffff' : '#1f2937'),
+    backgroundColor: styles.backgroundColor || (element.type === 'button' ? '#ef4444' : 'transparent'),
+    marginTop: styles.marginTop || '16px',
+    marginBottom: styles.marginBottom || '16px',
+    paddingX: styles.paddingX || '20px',
+    paddingY: styles.paddingY || '0px',
+    textAlign: styles.textAlign || (element.type === 'button' ? 'center' : 'left'),
+    fontWeight: styles.fontWeight || (element.type === 'button' ? '600' : 'normal'),
+    borderRadius: styles.borderRadius || (element.type === 'button' ? '6px' : '0px'),
+    // Preserve any additional custom styles
+    ...styles
+  };
 
   switch (element.type) {
     case 'text':
     case 'header':
       return (
         <Text style={{
-          fontSize: styles.fontSize || '16px',
-          color: styles.color || '#374151',
-          fontFamily: styles.fontFamily || '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-          textAlign: styles.textAlign as any || 'left',
+          fontSize: safeStyles.fontSize,
+          color: safeStyles.color,
+          fontFamily: safeStyles.fontFamily,
+          textAlign: safeStyles.textAlign as any,
           lineHeight: styles.lineHeight || '1.6',
-          fontWeight: styles.fontWeight || 'normal',
-          marginTop: styles.marginTop || '16px',
-          marginBottom: styles.marginBottom || '16px',
-          paddingLeft: styles.paddingX || '20px',
-          paddingRight: styles.paddingX || '20px',
-          paddingTop: styles.paddingY || '0px',
-          paddingBottom: styles.paddingY || '0px',
+          fontWeight: safeStyles.fontWeight,
+          marginTop: safeStyles.marginTop,
+          marginBottom: safeStyles.marginBottom,
+          paddingLeft: safeStyles.paddingX,
+          paddingRight: safeStyles.paddingX,
+          paddingTop: safeStyles.paddingY,
+          paddingBottom: safeStyles.paddingY,
         }}>
           {element.content || 'Enter your text here...'}
         </Text>
@@ -79,23 +97,23 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       const defaultY = paddingParts[0] || '12px';
       const defaultX = paddingParts[1] || paddingParts[0] || '24px';
       
-      const finalPaddingY = (styles && styles.paddingY) || defaultY;
-      const finalPaddingX = (styles && styles.paddingX) || defaultX;
+      const finalPaddingY = safeStyles.paddingY || defaultY;
+      const finalPaddingX = safeStyles.paddingX || defaultX;
       
       // Gmail-compatible table-based button with guaranteed defaults
-      const buttonBgColor = (styles && styles.backgroundColor) || '#ef4444';
-      const buttonTextColor = (styles && styles.color) || '#ffffff';
-      const buttonBorderRadius = (styles && styles.borderRadius) || '6px';
+      const buttonBgColor = safeStyles.backgroundColor;
+      const buttonTextColor = safeStyles.color;
+      const buttonBorderRadius = safeStyles.borderRadius;
       
       const isFullWidth = properties.fullWidth;
       
       // Check if we're inside a column by reducing Section wrapper conflicts
       const wrapperStyle = {
         textAlign: properties.alignment || 'center', 
-        marginTop: (styles && styles.marginTop) || '20px',
-        marginBottom: (styles && styles.marginBottom) || '20px',
-        paddingLeft: (styles && styles.paddingX) || '0px',
-        paddingRight: (styles && styles.paddingX) || '0px',
+        marginTop: safeStyles.marginTop,
+        marginBottom: safeStyles.marginBottom,
+        paddingLeft: '0px',
+        paddingRight: '0px',
         width: '100%'
       };
       
@@ -114,8 +132,8 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
                     color: buttonTextColor,
                     borderRadius: buttonBorderRadius,
                     padding: `${finalPaddingY} ${finalPaddingX}`,
-                    fontSize: (styles && styles.fontSize) || sizeStyles.fontSize,
-                    fontWeight: (styles && styles.fontWeight) || '600',
+                    fontSize: safeStyles.fontSize || sizeStyles.fontSize,
+                    fontWeight: safeStyles.fontWeight,
                     textDecoration: 'none',
                     fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
                     display: 'block',
