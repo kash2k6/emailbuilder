@@ -108,6 +108,35 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     }
   }, [draftData]);
 
+  // Helper function to recursively add elements to nested structures
+  const addElementRecursive = (elements: EmailElement[], parentId: string, newElement: EmailElement, columnSide?: 'left' | 'right'): EmailElement[] => {
+    return elements.map(el => {
+      if (el.id === parentId) {
+        if (el.type === 'columns' && columnSide) {
+          // Add to specific column side
+          const leftChildren = el.leftChildren || [];
+          const rightChildren = el.rightChildren || [];
+          console.log(`Adding to ${columnSide} column. Current left: ${leftChildren.length}, right: ${rightChildren.length}`);
+          return {
+            ...el,
+            leftChildren: columnSide === 'left' ? [...leftChildren, newElement] : leftChildren,
+            rightChildren: columnSide === 'right' ? [...rightChildren, newElement] : rightChildren,
+          };
+        } else if (el.type === 'columns' || el.type === 'section') {
+          // Add to general children for sections or columns without specified side
+          return { ...el, children: [...(el.children || []), newElement] };
+        }
+      }
+      // Recursively search in children
+      return {
+        ...el,
+        children: el.children ? addElementRecursive(el.children, parentId, newElement, columnSide) : undefined,
+        leftChildren: el.leftChildren ? addElementRecursive(el.leftChildren, parentId, newElement, columnSide) : undefined,
+        rightChildren: el.rightChildren ? addElementRecursive(el.rightChildren, parentId, newElement, columnSide) : undefined,
+      };
+    });
+  };
+
   // Add new element
   const addElement = useCallback((type: EmailElement['type'], parentId?: string, columnSide?: 'left' | 'right') => {
     if (!type) {
@@ -124,27 +153,11 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     };
 
     if (parentId) {
-      // Add to column or section
+      console.log(`Adding ${type} to parent ${parentId} on ${columnSide || 'default'} side`);
+      // Add to column or section using recursive helper
       setState(prev => ({
         ...prev,
-        elements: prev.elements.map(el => {
-          if (el.id === parentId) {
-            if (el.type === 'columns' && columnSide) {
-              // Add to specific column side
-              const leftChildren = el.leftChildren || [];
-              const rightChildren = el.rightChildren || [];
-              return {
-                ...el,
-                leftChildren: columnSide === 'left' ? [...leftChildren, newElement] : leftChildren,
-                rightChildren: columnSide === 'right' ? [...rightChildren, newElement] : rightChildren,
-              };
-            } else if (el.type === 'columns' || el.type === 'section') {
-              // Add to general children for sections or columns without specified side
-              return { ...el, children: [...(el.children || []), newElement] };
-            }
-          }
-          return el;
-        }),
+        elements: addElementRecursive(prev.elements, parentId, newElement, columnSide),
         selectedElement: newElement,
       }));
     } else {
