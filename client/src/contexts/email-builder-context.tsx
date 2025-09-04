@@ -496,6 +496,9 @@ function getDefaultProperties(type: EmailElement['type']): Record<string, any> {
       return {
         url: 'https://example.com',
         target: '_blank',
+        fullWidth: false,
+        size: 'medium',
+        alignment: 'center',
       };
     case 'image':
       return {

@@ -73,10 +73,28 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     const buttonText = properties.text || element.content || 'Click Here';
     
     const isSelected = selectedElement?.id === element.id;
+    
+    // Size variants
+    const getSizeStyles = (size: string) => {
+      switch (size) {
+        case 'small':
+          return { fontSize: '14px', paddingY: '8px', paddingX: '16px' };
+        case 'large':
+          return { fontSize: '18px', paddingY: '16px', paddingX: '32px' };
+        default: // medium
+          return { fontSize: '16px', paddingY: '12px', paddingX: '24px' };
+      }
+    };
+    
+    const sizeStyles = getSizeStyles(properties.size || 'medium');
+    const buttonWidth = properties.fullWidth ? '100%' : 'auto';
 
     return (
       <div 
-        style={{ textAlign: properties.alignment || 'center' }}
+        style={{ 
+          textAlign: properties.alignment || 'center',
+          margin: styles.margin || '20px 0'
+        }}
         className={cn(
           "p-2 -m-2 rounded transition-all duration-200 hover:bg-muted/20",
           isSelected && "ring-2 ring-primary bg-primary/5"
@@ -91,12 +109,14 @@ export function ElementComponents({ element }: ElementComponentsProps) {
           style={{
             backgroundColor: styles.backgroundColor || 'hsl(var(--primary))',
             color: styles.color || 'hsl(var(--primary-foreground))',
-            padding: `${styles.paddingY || '12px'} ${styles.paddingX || '24px'}`,
+            padding: `${styles.paddingY || sizeStyles.paddingY} ${styles.paddingX || sizeStyles.paddingX}`,
             borderRadius: styles.borderRadius || '6px',
-            fontSize: styles.fontSize || '16px',
+            fontSize: styles.fontSize || sizeStyles.fontSize,
             fontWeight: styles.fontWeight || '600',
             border: 'none',
             cursor: 'pointer',
+            width: buttonWidth,
+            display: properties.fullWidth ? 'block' : 'inline-block',
           }}
           className="hover:opacity-90 transition-opacity"
           data-testid="preview-button"

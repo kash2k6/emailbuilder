@@ -7,12 +7,15 @@ import { TemplateManager } from "./template-manager";
 import { useEmailBuilder } from "@/contexts/email-builder-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { 
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { 
   Select,
@@ -29,7 +32,8 @@ import {
   Menu,
   Settings,
   Smartphone,
-  Monitor
+  Monitor,
+  FolderOpen
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -40,6 +44,10 @@ export function EmailBuilderLayout() {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
   const [showPreview, setShowPreview] = useState(false);
   const [showSendDialog, setShowSendDialog] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showLoadDialog, setShowLoadDialog] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [templateDescription, setTemplateDescription] = useState('');
 
   const {
     elements,
@@ -116,7 +124,26 @@ export function EmailBuilderLayout() {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
-            {/* Templates removed per user request */}
+            {/* Load/Save Template Buttons */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowSaveDialog(true)}
+              data-testid="button-save-template"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {!isMobile && "Save"}
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowLoadDialog(true)}
+              data-testid="button-load-template"
+            >
+              <FolderOpen className="h-4 w-4 mr-2" />
+              {!isMobile && "Load"}
+            </Button>
 
             <Dialog open={showPreview} onOpenChange={setShowPreview}>
               <DialogTrigger asChild>
@@ -293,6 +320,129 @@ export function EmailBuilderLayout() {
           }}
         />
       )}
+
+      {/* Save Template Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save Email Template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Template Name</Label>
+              <Input
+                value={templateName}
+                onChange={(e) => setTemplateName(e.target.value)}
+                placeholder="Enter template name..."
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label>Description (optional)</Label>
+              <Textarea
+                value={templateDescription}
+                onChange={(e) => setTemplateDescription(e.target.value)}
+                placeholder="Describe your template..."
+                className="mt-1"
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                if (templateName.trim()) {
+                  const templateData = {
+                    id: Date.now().toString(),
+                    name: templateName,
+                    description: templateDescription,
+                    elements: elements,
+                    subject: subject,
+                    createdAt: new Date().toISOString()
+                  };
+                  const savedTemplates = JSON.parse(localStorage.getItem('email-templates') || '[]');
+                  savedTemplates.push(templateData);
+                  localStorage.setItem('email-templates', JSON.stringify(savedTemplates));
+                  setTemplateName('');
+                  setTemplateDescription('');
+                  setShowSaveDialog(false);
+                }
+              }}
+              disabled={!templateName.trim()}
+            >
+              Save Template
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Load Template Dialog */}
+      <Dialog open={showLoadDialog} onOpenChange={setShowLoadDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Load Email Template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4 max-h-96 overflow-y-auto">
+            {JSON.parse(localStorage.getItem('email-templates') || '[]').length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No saved templates found</p>
+                <p className="text-sm">Save your current design to create your first template</p>
+              </div>
+            ) : (
+              JSON.parse(localStorage.getItem('email-templates') || '[]').map((template: any) => (
+                <div key={template.id} className="border border-border rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-medium">{template.name}</h3>
+                      {template.description && (
+                        <p className="text-sm text-muted-foreground">{template.description}</p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Saved: {new Date(template.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          // Load template functionality will be improved later
+                          alert(`Loading template: ${template.name}. This will replace your current design.`);
+                          setShowLoadDialog(false);
+                        }}
+                      >
+                        Load
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const savedTemplates = JSON.parse(localStorage.getItem('email-templates') || '[]');
+                          const filteredTemplates = savedTemplates.filter((t: any) => t.id !== template.id);
+                          localStorage.setItem('email-templates', JSON.stringify(filteredTemplates));
+                          // Force re-render
+                          setShowLoadDialog(false);
+                          setTimeout(() => setShowLoadDialog(true), 100);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLoadDialog(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

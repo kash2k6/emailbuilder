@@ -561,43 +561,95 @@ export function PropertiesPanel() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="mb-2 block">Background Color</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={localStyles.backgroundColor || '#2563eb'}
-                    onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
-                    className="w-12 h-10 p-1 border rounded cursor-pointer"
-                    data-testid="input-button-bg-color"
-                  />
-                  <Input
-                    type="text"
-                    value={localStyles.backgroundColor || '#2563eb'}
-                    onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
-                    className="flex-1"
-                    data-testid="input-button-bg-color-hex"
-                  />
-                </div>
+            <div className="space-y-4">
+              {/* Full Width Toggle */}
+              <div className="flex items-center space-x-3">
+                <Label htmlFor="full-width" className="text-sm font-medium">Full Width</Label>
+                <input
+                  id="full-width"
+                  type="checkbox"
+                  checked={localProperties.fullWidth || false}
+                  onChange={(e) => handlePropertyChange('fullWidth', e.target.checked)}
+                  className="rounded"
+                  data-testid="checkbox-button-full-width"
+                />
               </div>
+              
+              {/* Button Size */}
               <div>
-                <Label className="mb-2 block">Text Color</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={localStyles.color || '#ffffff'}
-                    onChange={(e) => handleStyleChange('color', e.target.value)}
-                    className="w-12 h-10 p-1 border rounded cursor-pointer"
-                    data-testid="input-button-text-color"
-                  />
-                  <Input
-                    type="text"
-                    value={localStyles.color || '#ffffff'}
-                    onChange={(e) => handleStyleChange('color', e.target.value)}
-                    className="flex-1"
-                    data-testid="input-button-text-color-hex"
-                  />
+                <Label className="mb-2 block">Button Size</Label>
+                <Select
+                  value={localProperties.size || 'medium'}
+                  onValueChange={(value) => handlePropertyChange('size', value)}
+                >
+                  <SelectTrigger data-testid="select-button-size">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="small">Small</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="large">Large</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Button Alignment */}
+              <div>
+                <Label className="mb-2 block">Alignment</Label>
+                <Select
+                  value={localProperties.alignment || 'center'}
+                  onValueChange={(value) => handlePropertyChange('alignment', value)}
+                >
+                  <SelectTrigger data-testid="select-button-alignment">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="left">Left</SelectItem>
+                    <SelectItem value="center">Center</SelectItem>
+                    <SelectItem value="right">Right</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Colors */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="mb-2 block">Background</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="color"
+                      value={localStyles.backgroundColor || '#2563eb'}
+                      onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+                      className="w-12 h-10 p-1 border rounded cursor-pointer"
+                      data-testid="input-button-bg-color"
+                    />
+                    <Input
+                      type="text"
+                      value={localStyles.backgroundColor || '#2563eb'}
+                      onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+                      className="flex-1"
+                      data-testid="input-button-bg-color-hex"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label className="mb-2 block">Text Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="color"
+                      value={localStyles.color || '#ffffff'}
+                      onChange={(e) => handleStyleChange('color', e.target.value)}
+                      className="w-12 h-10 p-1 border rounded cursor-pointer"
+                      data-testid="input-button-text-color"
+                    />
+                    <Input
+                      type="text"
+                      value={localStyles.color || '#ffffff'}
+                      onChange={(e) => handleStyleChange('color', e.target.value)}
+                      className="flex-1"
+                      data-testid="input-button-text-color-hex"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
