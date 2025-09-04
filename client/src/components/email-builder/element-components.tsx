@@ -2,12 +2,16 @@ import { EmailElement } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useDragDropContext } from "@/lib/drag-drop-context";
+import { useEmailBuilder } from "@/hooks/use-email-builder";
 
 interface ElementComponentsProps {
   element: EmailElement;
 }
 
 export function ElementComponents({ element }: ElementComponentsProps) {
+  const { addElement } = useEmailBuilder();
+  const { createDropTarget } = useDragDropContext();
   const renderTextElement = () => {
     const styles = element.styles || {};
     // Convert markdown-like formatting to JSX
@@ -156,24 +160,38 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     const leftChildren = children.filter((_, index) => index % 2 === 0);
     const rightChildren = children.filter((_, index) => index % 2 === 1);
     
+    const leftDropTarget = createDropTarget({
+      onDrop: (componentType) => {
+        addElement(componentType as any, element.id);
+      },
+      accepts: ['text', 'button', 'image', 'divider', 'spacer', 'social'],
+    });
+
+    const rightDropTarget = createDropTarget({
+      onDrop: (componentType) => {
+        addElement(componentType as any, element.id);
+      },
+      accepts: ['text', 'button', 'image', 'divider', 'spacer', 'social'],
+    });
+    
     return (
       <div className="grid md:grid-cols-2 gap-4" data-testid="preview-columns">
-        <div className="space-y-3">
+        <div className="space-y-3 min-h-[100px]" {...leftDropTarget}>
           {leftChildren.map((child) => (
             <ElementComponents key={child.id} element={child} />
           ))}
           {leftChildren.length === 0 && (
-            <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border rounded">
+            <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border rounded h-20 flex items-center justify-center">
               Drop elements here
             </div>
           )}
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3 min-h-[100px]" {...rightDropTarget}>
           {rightChildren.map((child) => (
             <ElementComponents key={child.id} element={child} />
           ))}
           {rightChildren.length === 0 && (
-            <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border rounded">
+            <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border rounded h-20 flex items-center justify-center">
               Drop elements here
             </div>
           )}

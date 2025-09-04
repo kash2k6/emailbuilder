@@ -64,7 +64,6 @@ export function EmailCanvas() {
               )}
               onClick={(e) => {
                 e.stopPropagation();
-                console.log('Element clicked:', element.id, element.type);
                 selectElement(element.id);
               }}
               data-testid={`element-${element.type}-${element.id}`}

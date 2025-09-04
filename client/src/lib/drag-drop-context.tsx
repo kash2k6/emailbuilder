@@ -77,7 +77,7 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
           dragImage.style.transform = 'rotate(-5deg)';
           dragImage.style.opacity = '0.8';
           document.body.appendChild(dragImage);
-          e.dataTransfer.setDragImage(dragImage, 50, 25);
+          e.dataTransfer.setDragImage(dragImage, 25, 15);
           setTimeout(() => document.body.removeChild(dragImage), 0);
         }
       },

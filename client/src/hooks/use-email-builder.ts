@@ -187,7 +187,6 @@ export function useEmailBuilder() {
   // Select element
   const selectElement = useCallback((id: string) => {
     const element = state.elements.find(el => el.id === id);
-    console.log('Selecting element:', id, element);
     setState(prev => ({
       ...prev,
       selectedElement: element || null,

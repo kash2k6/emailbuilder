@@ -440,6 +440,229 @@ export function PropertiesPanel() {
           </div>
         )}
 
+        {selectedElement.type === 'social' && (
+          <div className="p-4 space-y-6">
+            <div className="space-y-3">
+              <Label>Social Media Links</Label>
+              <div className="space-y-3">
+                <div>
+                  <Label className="mb-2 block text-sm">Facebook URL</Label>
+                  <Input
+                    type="url"
+                    value={localProperties.facebook || ''}
+                    onChange={(e) => handlePropertyChange('facebook', e.target.value)}
+                    placeholder="https://facebook.com/yourpage"
+                    data-testid="input-facebook-url"
+                  />
+                </div>
+                <div>
+                  <Label className="mb-2 block text-sm">Twitter URL</Label>
+                  <Input
+                    type="url"
+                    value={localProperties.twitter || ''}
+                    onChange={(e) => handlePropertyChange('twitter', e.target.value)}
+                    placeholder="https://twitter.com/youraccount"
+                    data-testid="input-twitter-url"
+                  />
+                </div>
+                <div>
+                  <Label className="mb-2 block text-sm">Instagram URL</Label>
+                  <Input
+                    type="url"
+                    value={localProperties.instagram || ''}
+                    onChange={(e) => handlePropertyChange('instagram', e.target.value)}
+                    placeholder="https://instagram.com/youraccount"
+                    data-testid="input-instagram-url"
+                  />
+                </div>
+                <div>
+                  <Label className="mb-2 block text-sm">LinkedIn URL</Label>
+                  <Input
+                    type="url"
+                    value={localProperties.linkedin || ''}
+                    onChange={(e) => handlePropertyChange('linkedin', e.target.value)}
+                    placeholder="https://linkedin.com/company/yourcompany"
+                    data-testid="input-linkedin-url"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedElement.type === 'divider' && (
+          <div className="p-4 space-y-6">
+            <div className="space-y-3">
+              <Label>Divider Style</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="mb-2 block text-sm">Height</Label>
+                  <Select
+                    value={localStyles.height || '1px'}
+                    onValueChange={(value) => handleStyleChange('height', value)}
+                  >
+                    <SelectTrigger data-testid="select-divider-height">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1px">1px</SelectItem>
+                      <SelectItem value="2px">2px</SelectItem>
+                      <SelectItem value="3px">3px</SelectItem>
+                      <SelectItem value="4px">4px</SelectItem>
+                      <SelectItem value="5px">5px</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="mb-2 block text-sm">Width</Label>
+                  <Select
+                    value={localStyles.width || '100%'}
+                    onValueChange={(value) => handleStyleChange('width', value)}
+                  >
+                    <SelectTrigger data-testid="select-divider-width">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="100%">100%</SelectItem>
+                      <SelectItem value="75%">75%</SelectItem>
+                      <SelectItem value="50%">50%</SelectItem>
+                      <SelectItem value="25%">25%</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Label className="mb-2 block text-sm">Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={localStyles.borderColor || '#e5e7eb'}
+                    onChange={(e) => handleStyleChange('borderColor', e.target.value)}
+                    className="w-12 h-10 p-1 border rounded cursor-pointer"
+                    data-testid="input-divider-color"
+                  />
+                  <Input
+                    type="text"
+                    value={localStyles.borderColor || '#e5e7eb'}
+                    onChange={(e) => handleStyleChange('borderColor', e.target.value)}
+                    className="flex-1"
+                    data-testid="input-divider-color-hex"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedElement.type === 'spacer' && (
+          <div className="p-4 space-y-6">
+            <div className="space-y-3">
+              <Label>Spacer Height</Label>
+              <Select
+                value={localStyles.height || '20px'}
+                onValueChange={(value) => handleStyleChange('height', value)}
+              >
+                <SelectTrigger data-testid="select-spacer-height">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10px">10px</SelectItem>
+                  <SelectItem value="20px">20px</SelectItem>
+                  <SelectItem value="30px">30px</SelectItem>
+                  <SelectItem value="40px">40px</SelectItem>
+                  <SelectItem value="50px">50px</SelectItem>
+                  <SelectItem value="60px">60px</SelectItem>
+                  <SelectItem value="80px">80px</SelectItem>
+                  <SelectItem value="100px">100px</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
+        {selectedElement.type === 'columns' && (
+          <div className="p-4 space-y-6">
+            <div className="space-y-3">
+              <Label>Column Layout</Label>
+              <Select
+                value={localProperties.columnCount || '2'}
+                onValueChange={(value) => handlePropertyChange('columnCount', value)}
+              >
+                <SelectTrigger data-testid="select-column-count">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2">2 Columns</SelectItem>
+                  <SelectItem value="3">3 Columns</SelectItem>
+                  <SelectItem value="4">4 Columns</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-3">
+              <Label>Column Gap</Label>
+              <Select
+                value={localStyles.gap || '16px'}
+                onValueChange={(value) => handleStyleChange('gap', value)}
+              >
+                <SelectTrigger data-testid="select-column-gap">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="8px">8px</SelectItem>
+                  <SelectItem value="16px">16px</SelectItem>
+                  <SelectItem value="24px">24px</SelectItem>
+                  <SelectItem value="32px">32px</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
+        {selectedElement.type === 'footer' && (
+          <div className="p-4 space-y-6">
+            <div className="space-y-3">
+              <Label>Footer Content</Label>
+              <Textarea
+                value={selectedElement.content}
+                onChange={(e) => handleContentChange(e.target.value)}
+                placeholder="Enter footer content..."
+                rows={3}
+                className="resize-none"
+                data-testid="textarea-footer-content"
+              />
+            </div>
+            <div className="space-y-3">
+              <Label>Unsubscribe Link</Label>
+              <Input
+                type="url"
+                value={localProperties.unsubscribeUrl || ''}
+                onChange={(e) => handlePropertyChange('unsubscribeUrl', e.target.value)}
+                placeholder="https://example.com/unsubscribe"
+                data-testid="input-unsubscribe-url"
+              />
+            </div>
+            <div>
+              <Label className="mb-2 block">Text Color</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="color"
+                  value={localStyles.color || '#6b7280'}
+                  onChange={(e) => handleStyleChange('color', e.target.value)}
+                  className="w-12 h-10 p-1 border rounded cursor-pointer"
+                  data-testid="input-footer-text-color"
+                />
+                <Input
+                  type="text"
+                  value={localStyles.color || '#6b7280'}
+                  onChange={(e) => handleStyleChange('color', e.target.value)}
+                  className="flex-1"
+                  data-testid="input-footer-text-color-hex"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* General Spacing & Styling */}
         <div className="p-4 border-t border-border space-y-6">
           <h4 className="font-medium text-sm">Spacing & Layout</h4>
