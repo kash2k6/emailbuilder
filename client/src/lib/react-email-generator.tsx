@@ -34,21 +34,25 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
   const properties = element.properties || {};
   
   // Ensure styles object always exists with proper defaults for all element types
+  const getDefaultValue = (value: any, defaultValue: any) => {
+    return (value !== undefined && value !== null && value !== '') ? value : defaultValue;
+  };
+  
   const safeStyles = {
-    // Default styles that should apply to all elements
-    fontSize: styles.fontSize || '16px',
-    fontFamily: styles.fontFamily || 'Inter, system-ui, sans-serif',
-    color: styles.color || (element.type === 'button' ? '#ffffff' : '#1f2937'),
-    backgroundColor: styles.backgroundColor || (element.type === 'button' ? '#ef4444' : 'transparent'),
-    marginTop: styles.marginTop || '16px',
-    marginBottom: styles.marginBottom || '16px',
-    paddingX: styles.paddingX || '20px',
-    paddingY: styles.paddingY || '0px',
-    textAlign: styles.textAlign || (element.type === 'button' ? 'center' : 'left'),
-    fontWeight: styles.fontWeight || (element.type === 'button' ? '600' : 'normal'),
-    borderRadius: styles.borderRadius || (element.type === 'button' ? '6px' : '0px'),
-    // Preserve any additional custom styles
-    ...styles
+    fontSize: getDefaultValue(styles.fontSize, '16px'),
+    fontFamily: getDefaultValue(styles.fontFamily, 'Inter, system-ui, sans-serif'),
+    color: getDefaultValue(styles.color, element.type === 'button' ? '#ffffff' : '#1f2937'),
+    backgroundColor: getDefaultValue(styles.backgroundColor, element.type === 'button' ? '#ef4444' : 'transparent'),
+    marginTop: getDefaultValue(styles.marginTop, '16px'),
+    marginBottom: getDefaultValue(styles.marginBottom, '16px'),
+    paddingX: getDefaultValue(styles.paddingX, '20px'),
+    paddingY: getDefaultValue(styles.paddingY, '0px'),
+    textAlign: getDefaultValue(styles.textAlign, element.type === 'button' ? 'center' : 'left'),
+    fontWeight: getDefaultValue(styles.fontWeight, element.type === 'button' ? '600' : 'normal'),
+    borderRadius: getDefaultValue(styles.borderRadius, element.type === 'button' ? '6px' : '0px'),
+    lineHeight: getDefaultValue(styles.lineHeight, '1.6'),
+    width: getDefaultValue(styles.width, 'auto'),
+    height: getDefaultValue(styles.height, 'auto')
   };
 
   switch (element.type) {
