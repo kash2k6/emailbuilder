@@ -267,9 +267,14 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     const leftDropTarget = createDropTarget({
       onDrop: (componentType, e) => {
         if (e) {
+          e.preventDefault();
           e.stopPropagation();
         }
+        console.log('Dropping', componentType, 'into left column of', element.id);
         addElement(componentType as any, element.id, 'left');
+      },
+      onDragOver: () => {
+        console.log('Dragging over left column');
       },
       accepts: ['text', 'button', 'image', 'divider', 'spacer', 'social'],
     });
@@ -277,16 +282,28 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     const rightDropTarget = createDropTarget({
       onDrop: (componentType, e) => {
         if (e) {
+          e.preventDefault();
           e.stopPropagation();
         }
+        console.log('Dropping', componentType, 'into right column of', element.id);
         addElement(componentType as any, element.id, 'right');
+      },
+      onDragOver: () => {
+        console.log('Dragging over right column');
       },
       accepts: ['text', 'button', 'image', 'divider', 'spacer', 'social'],
     });
     
     return (
       <div className="grid md:grid-cols-2 gap-4" data-testid="preview-columns">
-        <div className="space-y-3 min-h-[100px]" {...leftDropTarget}>
+        <div 
+          className={cn(
+            "space-y-3 min-h-[100px] relative p-2 rounded-lg transition-all duration-200",
+            "border-2 border-dashed border-transparent hover:border-primary/30",
+            "bg-muted/10 hover:bg-muted/20"
+          )} 
+          {...leftDropTarget}
+        >
           {leftChildren.map((child) => (
             <div
               key={child.id}
@@ -304,12 +321,19 @@ export function ElementComponents({ element }: ElementComponentsProps) {
             </div>
           ))}
           {leftChildren.length === 0 && (
-            <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border rounded h-20 flex items-center justify-center">
-              Drop elements here
+            <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border/50 rounded h-20 flex items-center justify-center">
+              Drop elements here (Left)
             </div>
           )}
         </div>
-        <div className="space-y-3 min-h-[100px]" {...rightDropTarget}>
+        <div 
+          className={cn(
+            "space-y-3 min-h-[100px] relative p-2 rounded-lg transition-all duration-200",
+            "border-2 border-dashed border-transparent hover:border-primary/30",
+            "bg-muted/10 hover:bg-muted/20"
+          )} 
+          {...rightDropTarget}
+        >
           {rightChildren.map((child) => (
             <div
               key={child.id}
@@ -327,8 +351,8 @@ export function ElementComponents({ element }: ElementComponentsProps) {
             </div>
           ))}
           {rightChildren.length === 0 && (
-            <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border rounded h-20 flex items-center justify-center">
-              Drop elements here
+            <div className="text-center text-muted-foreground text-sm p-4 border-2 border-dashed border-border/50 rounded h-20 flex items-center justify-center">
+              Drop elements here (Right)
             </div>
           )}
         </div>
