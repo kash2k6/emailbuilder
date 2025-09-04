@@ -124,6 +124,7 @@ export function PropertiesPanel() {
             <div className="space-y-3">
               <Label>Content</Label>
               <Textarea
+                id="text-content"
                 value={selectedElement.content}
                 onChange={(e) => handleContentChange(e.target.value)}
                 placeholder="Enter your text content..."
@@ -139,27 +140,161 @@ export function PropertiesPanel() {
               <Card>
                 <CardContent className="p-2">
                   <div className="flex flex-wrap gap-1">
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0"
+                      onClick={() => {
+                        const textarea = document.getElementById('text-content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const start = textarea.selectionStart;
+                          const end = textarea.selectionEnd;
+                          const text = selectedElement.content || '';
+                          const selectedText = text.substring(start, end);
+                          if (selectedText) {
+                            const newText = text.substring(0, start) + '**' + selectedText + '**' + text.substring(end);
+                            handleContentChange(newText);
+                            // Reset selection after the inserted markers
+                            setTimeout(() => {
+                              textarea.setSelectionRange(start + 2, end + 2);
+                              textarea.focus();
+                            }, 0);
+                          } else {
+                            // Insert markers at cursor position
+                            const newText = text.substring(0, start) + '****' + text.substring(end);
+                            handleContentChange(newText);
+                            // Place cursor between the markers
+                            setTimeout(() => {
+                              textarea.setSelectionRange(start + 2, start + 2);
+                              textarea.focus();
+                            }, 0);
+                          }
+                        }
+                      }}
+                      title="Bold"
+                    >
                       <Bold className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0"
+                      onClick={() => {
+                        const textarea = document.getElementById('text-content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const start = textarea.selectionStart;
+                          const end = textarea.selectionEnd;
+                          const text = selectedElement.content || '';
+                          const selectedText = text.substring(start, end);
+                          if (selectedText) {
+                            const newText = text.substring(0, start) + '*' + selectedText + '*' + text.substring(end);
+                            handleContentChange(newText);
+                            // Reset selection after the inserted markers
+                            setTimeout(() => {
+                              textarea.setSelectionRange(start + 1, end + 1);
+                              textarea.focus();
+                            }, 0);
+                          } else {
+                            // Insert markers at cursor position
+                            const newText = text.substring(0, start) + '**' + text.substring(end);
+                            handleContentChange(newText);
+                            // Place cursor between the markers
+                            setTimeout(() => {
+                              textarea.setSelectionRange(start + 1, start + 1);
+                              textarea.focus();
+                            }, 0);
+                          }
+                        }
+                      }}
+                      title="Italic"
+                    >
                       <Italic className="h-4 w-4" />
                     </Button>
                     <Separator orientation="vertical" className="h-6 mx-1" />
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Button 
+                      variant={localStyles.textAlign === 'left' || !localStyles.textAlign ? "secondary" : "ghost"}
+                      size="sm" 
+                      className="h-8 w-8 p-0"
+                      onClick={() => handleStyleChange('textAlign', 'left')}
+                      title="Align Left"
+                    >
                       <AlignLeft className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Button 
+                      variant={localStyles.textAlign === 'center' ? "secondary" : "ghost"}
+                      size="sm" 
+                      className="h-8 w-8 p-0"
+                      onClick={() => handleStyleChange('textAlign', 'center')}
+                      title="Align Center"
+                    >
                       <AlignCenter className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Button 
+                      variant={localStyles.textAlign === 'right' ? "secondary" : "ghost"}
+                      size="sm" 
+                      className="h-8 w-8 p-0"
+                      onClick={() => handleStyleChange('textAlign', 'right')}
+                      title="Align Right"
+                    >
                       <AlignRight className="h-4 w-4" />
                     </Button>
                     <Separator orientation="vertical" className="h-6 mx-1" />
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0"
+                      onClick={() => {
+                        const textarea = document.getElementById('text-content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const start = textarea.selectionStart;
+                          const text = selectedElement.content || '';
+                          const lines = text.split('\n');
+                          let currentLine = 0;
+                          let charCount = 0;
+                          for (let i = 0; i < lines.length; i++) {
+                            if (charCount + lines[i].length >= start) {
+                              currentLine = i;
+                              break;
+                            }
+                            charCount += lines[i].length + 1;
+                          }
+                          if (!lines[currentLine].startsWith('- ')) {
+                            lines[currentLine] = '- ' + lines[currentLine];
+                            handleContentChange(lines.join('\n'));
+                          }
+                        }
+                      }}
+                      title="Bullet List"
+                    >
                       <List className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0"
+                      onClick={() => {
+                        const textarea = document.getElementById('text-content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const start = textarea.selectionStart;
+                          const text = selectedElement.content || '';
+                          const lines = text.split('\n');
+                          let currentLine = 0;
+                          let charCount = 0;
+                          for (let i = 0; i < lines.length; i++) {
+                            if (charCount + lines[i].length >= start) {
+                              currentLine = i;
+                              break;
+                            }
+                            charCount += lines[i].length + 1;
+                          }
+                          if (!lines[currentLine].match(/^\d+\. /)) {
+                            lines[currentLine] = '1. ' + lines[currentLine];
+                            handleContentChange(lines.join('\n'));
+                          }
+                        }
+                      }}
+                      title="Numbered List"
+                    >
                       <ListOrdered className="h-4 w-4" />
                     </Button>
                   </div>
