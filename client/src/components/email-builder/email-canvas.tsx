@@ -1,4 +1,4 @@
-import { useEmailBuilder } from "@/hooks/use-email-builder";
+import { useEmailBuilder } from "@/contexts/email-builder-context";
 import { useDragDropContext } from "@/lib/drag-drop-context";
 import { ElementComponents } from "./element-components";
 import { Card } from "@/components/ui/card";

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { EmailElement, EmailBuilderData } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
@@ -14,10 +14,30 @@ interface EmailBuilderState {
   isSaving: boolean;
 }
 
+interface EmailBuilderContextType extends EmailBuilderState {
+  addElement: (type: EmailElement['type'], parentId?: string) => void;
+  updateElement: (id: string, updates: Partial<EmailElement>) => void;
+  deleteElement: (id: string) => void;
+  duplicateElement: (id: string) => void;
+  selectElement: (id: string) => void;
+  moveElement: (id: string, direction: 'up' | 'down') => void;
+  setSubject: (subject: string) => void;
+  setEmailWidth: (width: number) => void;
+  generateHTML: () => Promise<string>;
+  loadTemplate: (template: any) => void;
+  loadFromTemplate: (template: any) => void;
+  saveDraft: () => void;
+}
+
+const EmailBuilderContext = createContext<EmailBuilderContextType | null>(null);
+
 // Mock user ID for demo purposes - in real app this would come from auth
 const MOCK_USER_ID = 'demo-user-123';
 
-export function useEmailBuilder() {
+// Generate unique ID for new elements
+const generateId = () => `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+export function EmailBuilderProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<EmailBuilderState>({
     elements: [],
     subject: '',
@@ -68,38 +88,8 @@ export function useEmailBuilder() {
     }
   }, [draftData]);
 
-  // Auto-save functionality
-  const debouncedSave = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return (data: EmailBuilderData) => {
-        setState(prev => ({ ...prev, isSaving: true }));
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          saveDraftMutation.mutate(data);
-        }, 2000);
-      };
-    })(),
-    [saveDraftMutation]
-  );
-
-  // Auto-save when state changes (disabled to prevent infinite loop)
-  // useEffect(() => {
-  //   if (state.elements.length > 0 || state.subject) {
-  //     debouncedSave({
-  //       elements: state.elements,
-  //       subject: state.subject,
-  //       emailWidth: state.emailWidth,
-  //     });
-  //   }
-  // }, [state.elements, state.subject, state.emailWidth, debouncedSave]);
-
-  // Generate unique ID for new elements
-  const generateId = () => `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
   // Add new element
   const addElement = useCallback((type: EmailElement['type'], parentId?: string) => {
-    // Validate type is not empty
     if (!type || type === '') {
       return;
     }
@@ -126,14 +116,11 @@ export function useEmailBuilder() {
       }));
     } else {
       // Add to main elements
-      setState(prev => {
-        const newState = {
-          ...prev,
-          elements: [...prev.elements, newElement],
-          selectedElement: newElement,
-        };
-        return newState;
-      });
+      setState(prev => ({
+        ...prev,
+        elements: [...prev.elements, newElement],
+        selectedElement: newElement,
+      }));
     }
 
     toast({
@@ -194,17 +181,11 @@ export function useEmailBuilder() {
 
   // Select element
   const selectElement = useCallback((id: string) => {
-    console.log('Hook: selectElement called with id:', id);
     const element = state.elements.find(el => el.id === id);
-    console.log('Hook: Found element:', element);
-    setState(prev => {
-      const newState = {
-        ...prev,
-        selectedElement: element || null,
-      };
-      console.log('Hook: Setting new state with selectedElement:', newState.selectedElement);
-      return newState;
-    });
+    setState(prev => ({
+      ...prev,
+      selectedElement: element || null,
+    }));
   }, [state.elements]);
 
   // Move element
@@ -220,7 +201,7 @@ export function useEmailBuilder() {
       } else if (direction === 'down' && currentIndex < elements.length - 1) {
         [elements[currentIndex], elements[currentIndex + 1]] = [elements[currentIndex + 1], elements[currentIndex]];
       } else {
-        return prev; // No change needed
+        return prev;
       }
       
       return {
@@ -230,17 +211,15 @@ export function useEmailBuilder() {
     });
   }, []);
 
-  // Set subject
+  // Other methods...
   const setSubject = useCallback((subject: string) => {
     setState(prev => ({ ...prev, subject }));
   }, []);
 
-  // Set email width
   const setEmailWidth = useCallback((width: number) => {
     setState(prev => ({ ...prev, emailWidth: width }));
   }, []);
 
-  // Generate HTML
   const generateHTML = useCallback(async () => {
     try {
       const response = await apiRequest('POST', '/api/generate-email-html', {
@@ -264,7 +243,6 @@ export function useEmailBuilder() {
     }
   }, [state.elements, state.subject, state.emailWidth, toast]);
 
-  // Load template
   const loadTemplate = useCallback((template: any) => {
     setState(prev => ({
       ...prev,
@@ -279,12 +257,10 @@ export function useEmailBuilder() {
     });
   }, [toast]);
 
-  // Load from template
   const loadFromTemplate = useCallback((template: any) => {
     loadTemplate(template);
   }, [loadTemplate]);
 
-  // Manual save
   const saveDraft = useCallback(() => {
     setState(prev => ({ ...prev, isSaving: true }));
     saveDraftMutation.mutate({
@@ -294,16 +270,8 @@ export function useEmailBuilder() {
     });
   }, [state.elements, state.subject, state.emailWidth, saveDraftMutation]);
 
-  return {
-    // State
-    elements: state.elements,
-    subject: state.subject,
-    selectedElement: state.selectedElement,
-    emailWidth: state.emailWidth,
-    lastSaved: state.lastSaved,
-    isSaving: state.isSaving,
-
-    // Actions
+  const value: EmailBuilderContextType = {
+    ...state,
     addElement,
     updateElement,
     deleteElement,
@@ -317,6 +285,20 @@ export function useEmailBuilder() {
     loadFromTemplate,
     saveDraft,
   };
+
+  return (
+    <EmailBuilderContext.Provider value={value}>
+      {children}
+    </EmailBuilderContext.Provider>
+  );
+}
+
+export function useEmailBuilder() {
+  const context = useContext(EmailBuilderContext);
+  if (!context) {
+    throw new Error('useEmailBuilder must be used within EmailBuilderProvider');
+  }
+  return context;
 }
 
 // Default content for different element types
@@ -345,7 +327,7 @@ function getDefaultContent(type: EmailElement['type']): string {
 }
 
 // Default styles for different element types
-function getDefaultStyles(type: EmailElement['type']): Record<string, string> {
+function getDefaultStyles(type: EmailElement['type']): Record<string, any> {
   switch (type) {
     case 'text':
       return {
@@ -359,49 +341,55 @@ function getDefaultStyles(type: EmailElement['type']): Record<string, string> {
       };
     case 'button':
       return {
-        backgroundColor: 'hsl(221.2 83.2% 53.3%)',
+        backgroundColor: 'hsl(222.2 47.4% 11.2%)',
         color: 'hsl(210 40% 98%)',
-        padding: '12px 24px',
         borderRadius: '6px',
-        textDecoration: 'none',
-        display: 'inline-block',
-        fontSize: '16px',
-        fontWeight: '600',
+        paddingX: '24px',
+        paddingY: '12px',
         textAlign: 'center',
-        border: 'none',
-        cursor: 'pointer',
+        fontSize: '16px',
+        fontWeight: '500',
         margin: '20px 0',
       };
     case 'image':
       return {
-        maxWidth: '100%',
+        width: '100%',
+        maxWidth: '600px',
         height: 'auto',
-        display: 'block',
-        margin: '20px auto',
-        textAlign: 'center',
+        borderRadius: '8px',
+        margin: '20px 0',
       };
     case 'divider':
       return {
-        height: '1px',
-        backgroundColor: 'hsl(214.3 31.8% 91.4%)',
+        borderTop: '1px solid hsl(214.3 31.8% 91.4%)',
         margin: '20px 0',
-        border: 'none',
+        height: '1px',
+        width: '100%',
       };
     case 'spacer':
       return {
         height: '20px',
-        backgroundColor: 'transparent',
       };
     case 'header':
       return {
+        background: 'linear-gradient(135deg, hsl(222.2 47.4% 11.2%), hsl(222.2 47.4% 11.2%)/0.8)',
+        color: 'hsl(210 40% 98%)',
+        padding: '24px',
+        textAlign: 'center',
         fontSize: '24px',
         fontWeight: 'bold',
-        color: 'hsl(210 40% 98%)',
-        textAlign: 'center',
-        margin: '0',
-        padding: '24px',
-        background: 'linear-gradient(135deg, hsl(221.2 83.2% 53.3%), hsl(221.2 83.2% 53.3%/0.8))',
         borderRadius: '8px',
+        margin: '0',
+      };
+    case 'columns':
+      return {
+        gap: '16px',
+        margin: '20px 0',
+      };
+    case 'social':
+      return {
+        textAlign: 'center',
+        margin: '20px 0',
       };
     case 'footer':
       return {
@@ -411,19 +399,7 @@ function getDefaultStyles(type: EmailElement['type']): Record<string, string> {
         margin: '20px 0',
         padding: '20px 0',
         borderTop: '1px solid hsl(214.3 31.8% 91.4%)',
-        backgroundColor: 'hsl(210 40% 96%/0.5)',
-      };
-    case 'columns':
-      return {
-        display: 'flex',
-        gap: '20px',
-        margin: '20px 0',
-        backgroundColor: 'transparent',
-      };
-    case 'social':
-      return {
-        textAlign: 'center',
-        margin: '20px 0',
+        backgroundColor: 'hsl(210 40% 96.1%)/0.5',
       };
     default:
       return {};
@@ -431,7 +407,7 @@ function getDefaultStyles(type: EmailElement['type']): Record<string, string> {
 }
 
 // Default properties for different element types
-function getDefaultProperties(type: EmailElement['type']) {
+function getDefaultProperties(type: EmailElement['type']): Record<string, any> {
   switch (type) {
     case 'text':
       return {
@@ -443,37 +419,28 @@ function getDefaultProperties(type: EmailElement['type']) {
       };
     case 'button':
       return {
-        text: 'Click Here',
-        url: '#',
-        alignment: 'center',
-        fontSize: '16px',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        padding: '12px 24px',
-        width: 'auto',
-        textColor: 'hsl(210 40% 98%)',
+        url: 'https://example.com',
+        target: '_blank',
       };
     case 'image':
       return {
-        src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
-        alt: 'Professional team collaboration',
-        width: 600,
-        height: 300,
+        alt: 'Image description',
+        url: '',
       };
-    case 'header':
+    case 'columns':
       return {
-        fontSize: '24px',
-        color: 'hsl(210 40% 98%)',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        textAlign: 'center',
-        fontWeight: 'bold',
+        columnCount: 2,
+      };
+    case 'social':
+      return {
+        facebook: '',
+        twitter: '',
+        instagram: '',
+        linkedin: '',
       };
     case 'footer':
       return {
-        fontSize: '14px',
-        color: 'hsl(215.4 16.3% 46.9%)',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        textAlign: 'center',
-        fontWeight: 'normal',
+        unsubscribeUrl: '#',
       };
     default:
       return {};

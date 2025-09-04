@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useDragDropContext } from "@/lib/drag-drop-context";
-import { useEmailBuilder } from "@/hooks/use-email-builder";
+import { useEmailBuilder } from "@/contexts/email-builder-context";
 
 interface ElementComponentsProps {
   element: EmailElement;

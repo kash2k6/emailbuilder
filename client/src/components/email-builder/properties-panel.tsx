@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useEmailBuilder } from "@/hooks/use-email-builder";
+import { useEmailBuilder } from "@/contexts/email-builder-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,7 +40,6 @@ export function PropertiesPanel() {
   const { selectedElement, updateElement, deleteElement, duplicateElement } = useEmailBuilder();
   const [localStyles, setLocalStyles] = useState(selectedElement?.styles || {});
   const [localProperties, setLocalProperties] = useState(selectedElement?.properties || {});
-
 
   // Update local state when selectedElement changes
   useEffect(() => {

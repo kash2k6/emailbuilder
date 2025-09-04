@@ -4,7 +4,7 @@ import { EmailCanvas } from "./email-canvas";
 import { PropertiesPanel } from "./properties-panel";
 import { EmailPreview } from "./email-preview";
 import { TemplateManager } from "./template-manager";
-import { useEmailBuilder } from "@/hooks/use-email-builder";
+import { useEmailBuilder } from "@/contexts/email-builder-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 

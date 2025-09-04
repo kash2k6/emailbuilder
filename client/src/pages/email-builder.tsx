@@ -1,9 +1,12 @@
 import { EmailBuilderLayout } from "@/components/email-builder/email-builder-layout";
+import { EmailBuilderProvider } from "@/contexts/email-builder-context";
 
 export default function EmailBuilder() {
   return (
-    <div className="h-screen bg-background">
-      <EmailBuilderLayout />
-    </div>
+    <EmailBuilderProvider>
+      <div className="h-screen bg-background">
+        <EmailBuilderLayout />
+      </div>
+    </EmailBuilderProvider>
   );
 }

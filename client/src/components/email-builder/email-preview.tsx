@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useEmailBuilder } from "@/hooks/use-email-builder";
+import { useEmailBuilder } from "@/contexts/email-builder-context";
 import { ElementComponents } from "./element-components";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
