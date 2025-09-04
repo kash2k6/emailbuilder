@@ -301,6 +301,10 @@ export function EmailBuilderLayout() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="800">800px</SelectItem>
+                    <SelectItem value="750">750px</SelectItem>
+                    <SelectItem value="700">700px</SelectItem>
+                    <SelectItem value="650">650px</SelectItem>
                     <SelectItem value="600">600px</SelectItem>
                     <SelectItem value="480">480px</SelectItem>
                     <SelectItem value="320">320px</SelectItem>
