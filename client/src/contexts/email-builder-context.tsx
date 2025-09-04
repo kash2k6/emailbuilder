@@ -181,12 +181,16 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
       if (el.id === id) {
         return { ...el, ...updates };
       }
-      if (el.children) {
+      
+      // Check if element has any children (children, leftChildren, or rightChildren)
+      const hasChildren = el.children || el.leftChildren || el.rightChildren;
+      
+      if (hasChildren) {
         return {
           ...el,
-          children: el.children ? updateElementRecursive(el.children, id, updates) : undefined,
-          leftChildren: el.leftChildren ? updateElementRecursive(el.leftChildren, id, updates) : undefined,
-          rightChildren: el.rightChildren ? updateElementRecursive(el.rightChildren, id, updates) : undefined,
+          children: el.children ? updateElementRecursive(el.children, id, updates) : el.children,
+          leftChildren: el.leftChildren ? updateElementRecursive(el.leftChildren, id, updates) : el.leftChildren,
+          rightChildren: el.rightChildren ? updateElementRecursive(el.rightChildren, id, updates) : el.rightChildren,
         };
       }
       return el;
