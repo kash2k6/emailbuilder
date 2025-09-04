@@ -24,8 +24,11 @@ import {
   AlignCenter,
   AlignRight,
   List,
-  ListOrdered
+  ListOrdered,
+  Send,
+  Loader2
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const FONT_OPTIONS = [
   { value: 'Inter, system-ui, sans-serif', label: 'Inter' },
@@ -37,9 +40,13 @@ const FONT_OPTIONS = [
 ];
 
 export function PropertiesPanel() {
-  const { selectedElement, updateElement, deleteElement, duplicateElement, emailBackground, setEmailBackground } = useEmailBuilder();
+  const { selectedElement, updateElement, deleteElement, duplicateElement, emailBackground, setEmailBackground, elements } = useEmailBuilder();
   const [localStyles, setLocalStyles] = useState(selectedElement?.styles || {});
   const [localProperties, setLocalProperties] = useState(selectedElement?.properties || {});
+  const [testEmail, setTestEmail] = useState("");
+  const [testSubject, setTestSubject] = useState("Test Email from Email Builder");
+  const [isSending, setIsSending] = useState(false);
+  const { toast } = useToast();
 
   // Update local state when selectedElement changes
   useEffect(() => {
@@ -71,6 +78,53 @@ export function PropertiesPanel() {
   const handleContentChange = (content: string) => {
     if (selectedElement) {
       updateElement(selectedElement.id, { content });
+    }
+  };
+
+  const handleSendTestEmail = async () => {
+    if (!testEmail || !elements || elements.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please enter an email address and add some elements to your email",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      const response = await fetch('/api/send-test-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: testEmail,
+          subject: testSubject,
+          elements: elements,
+          emailWidth: 600,
+          emailBackground: emailBackground
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({
+          title: "Email sent!",
+          description: `Test email sent successfully to ${testEmail}`,
+        });
+      } else {
+        throw new Error(result.error || 'Failed to send email');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error sending email",
+        description: error.message || "Failed to send test email",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -258,6 +312,60 @@ export function PropertiesPanel() {
                 <SelectItem value="24px">XXL (24px)</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Send Test Email */}
+          <div className="space-y-4">
+            <Separator />
+            <div>
+              <Label className="text-sm font-semibold">Send Test Email</Label>
+              <p className="text-xs text-muted-foreground mb-3">
+                Send a test email to see how your design looks in real email clients
+              </p>
+              
+              <div className="space-y-3">
+                <div>
+                  <Label className="mb-2 block text-sm">Subject</Label>
+                  <Input
+                    type="text"
+                    value={testSubject}
+                    onChange={(e) => setTestSubject(e.target.value)}
+                    placeholder="Test Email Subject"
+                    data-testid="input-test-subject"
+                  />
+                </div>
+                
+                <div>
+                  <Label className="mb-2 block text-sm">Send to Email</Label>
+                  <Input
+                    type="email"
+                    value={testEmail}
+                    onChange={(e) => setTestEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    data-testid="input-test-email"
+                  />
+                </div>
+                
+                <Button 
+                  onClick={handleSendTestEmail}
+                  disabled={isSending || !testEmail}
+                  className="w-full"
+                  data-testid="button-send-test"
+                >
+                  {isSending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Send Test Email
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -170,7 +170,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Send email endpoint (for Resend integration)
+  // Send test email endpoint (Resend integration)
+  app.post("/api/send-test-email", async (req, res) => {
+    try {
+      const { to, subject, elements, emailWidth = 600, emailBackground } = req.body;
+      
+      if (!to || !subject || !elements) {
+        return res.status(400).json({ success: false, error: "Missing required fields: to, subject, elements" });
+      }
+
+      if (!process.env.RESEND_API_KEY) {
+        return res.status(500).json({ success: false, error: "RESEND_API_KEY not configured" });
+      }
+
+      // Import Resend and our email generator
+      const { Resend } = await import('resend');
+      const { createEmailComponent } = await import('../client/src/lib/react-email-generator.js');
+      
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      
+      // Following official Resend + React.email pattern
+      const data = await resend.emails.send({
+        from: 'onboarding@resend.dev', // Resend's verified domain for testing
+        to: to,
+        subject: subject,
+        react: createEmailComponent(elements, subject, { emailWidth, emailBackground })
+      });
+
+      res.json({ 
+        success: true, 
+        data: data,
+        message: "Test email sent successfully!"
+      });
+    } catch (error: any) {
+      console.error('Resend error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error.message || "Failed to send test email" 
+      });
+    }
+  });
+
+  // Send email endpoint (for campaigns)
   app.post("/api/send-email", async (req, res) => {
     try {
       const { to, subject, html, text, audienceId, scheduledAt } = req.body;
