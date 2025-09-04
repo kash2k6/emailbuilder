@@ -44,8 +44,12 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           textAlign: styles.textAlign as any || 'left',
           lineHeight: styles.lineHeight || '1.6',
           fontWeight: styles.fontWeight || 'normal',
-          margin: styles.margin || '16px 0',
-          padding: styles.padding || '0 20px',
+          marginTop: styles.marginTop || '16px',
+          marginBottom: styles.marginBottom || '16px',
+          paddingLeft: styles.paddingX || '20px',
+          paddingRight: styles.paddingX || '20px',
+          paddingTop: styles.paddingY || '0px',
+          paddingBottom: styles.paddingY || '0px',
         }}>
           {element.content || 'Enter your text here...'}
         </Text>
@@ -70,13 +74,21 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       const sizeStyles = getSizeStyles(properties.size || 'medium');
       
       return (
-        <Section style={{ textAlign: properties.alignment || 'center', margin: '20px 0' }}>
+        <Section style={{ 
+          textAlign: properties.alignment || 'center', 
+          marginTop: styles.marginTop || '20px',
+          marginBottom: styles.marginBottom || '20px'
+        }}>
           <Button 
             href={buttonUrl}
             style={{
               backgroundColor: styles.backgroundColor || '#3b82f6',
               color: styles.color || '#ffffff',
               padding: styles.padding || sizeStyles.padding,
+              paddingLeft: styles.paddingX || sizeStyles.padding,
+              paddingRight: styles.paddingX || sizeStyles.padding,
+              paddingTop: styles.paddingY || sizeStyles.padding,
+              paddingBottom: styles.paddingY || sizeStyles.padding,
               borderRadius: styles.borderRadius || '6px',
               fontSize: styles.fontSize || sizeStyles.fontSize,
               fontWeight: styles.fontWeight || '600',
@@ -99,8 +111,12 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       return (
         <Section style={{ 
           textAlign: styles.textAlign as any || 'center',
-          margin: '20px 0',
-          padding: '0 20px'
+          marginTop: styles.marginTop || '20px',
+          marginBottom: styles.marginBottom || '20px',
+          paddingLeft: styles.paddingX || '20px',
+          paddingRight: styles.paddingX || '20px',
+          paddingTop: styles.paddingY || '0px',
+          paddingBottom: styles.paddingY || '0px'
         }}>
           <Img 
             src={imageSrc} 
@@ -119,10 +135,16 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
 
     case 'divider':
       return (
-        <Section style={{ margin: '20px 0', padding: '0 20px' }}>
+        <Section style={{ 
+          marginTop: styles.marginTop || '20px',
+          marginBottom: styles.marginBottom || '20px',
+          paddingLeft: styles.paddingX || '20px',
+          paddingRight: styles.paddingX || '20px'
+        }}>
           <Hr style={{
             borderColor: styles.backgroundColor || '#e5e7eb',
-            margin: styles.margin || '20px 0'
+            height: styles.height || '1px',
+            width: styles.width || '100%'
           }} />
         </Section>
       );
@@ -172,8 +194,12 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       return (
         <Section style={{ 
           textAlign: styles.textAlign as any || 'center',
-          margin: '20px 0',
-          padding: '0 20px'
+          marginTop: styles.marginTop || '20px',
+          marginBottom: styles.marginBottom || '20px',
+          paddingLeft: styles.paddingX || '20px',
+          paddingRight: styles.paddingX || '20px',
+          paddingTop: styles.paddingY || '0px',
+          paddingBottom: styles.paddingY || '0px'
         }}>
           {socialLinks.map((social) => (
             <Link 

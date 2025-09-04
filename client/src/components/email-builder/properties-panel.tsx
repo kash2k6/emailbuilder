@@ -532,6 +532,98 @@ export function PropertiesPanel() {
                 />
               </div>
             </div>
+            
+            {/* Spacing Controls */}
+            <div className="space-y-4">
+              <Separator />
+              <div>
+                <Label className="text-sm font-semibold">Spacing</Label>
+                <p className="text-xs text-muted-foreground mb-3">Control space around this element</p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="mb-2 block text-sm">Top Margin</Label>
+                    <Select
+                      value={localStyles.marginTop || '16px'}
+                      onValueChange={(value) => handleStyleChange('marginTop', value)}
+                    >
+                      <SelectTrigger data-testid="select-text-margin-top">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-2 block text-sm">Bottom Margin</Label>
+                    <Select
+                      value={localStyles.marginBottom || '16px'}
+                      onValueChange={(value) => handleStyleChange('marginBottom', value)}
+                    >
+                      <SelectTrigger data-testid="select-text-margin-bottom">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <div>
+                    <Label className="mb-2 block text-sm">Left/Right Padding</Label>
+                    <Select
+                      value={localStyles.paddingX || '20px'}
+                      onValueChange={(value) => handleStyleChange('paddingX', value)}
+                    >
+                      <SelectTrigger data-testid="select-text-padding-x">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="12px">12px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-2 block text-sm">Top/Bottom Padding</Label>
+                    <Select
+                      value={localStyles.paddingY || '0px'}
+                      onValueChange={(value) => handleStyleChange('paddingY', value)}
+                    >
+                      <SelectTrigger data-testid="select-text-padding-y">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="12px">12px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -712,6 +804,58 @@ export function PropertiesPanel() {
                 </Select>
               </div>
             </div>
+            
+            {/* Spacing Controls */}
+            <div className="space-y-4">
+              <Separator />
+              <div>
+                <Label className="text-sm font-semibold">Spacing</Label>
+                <p className="text-xs text-muted-foreground mb-3">Control space around this button</p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="mb-2 block text-sm">Top Margin</Label>
+                    <Select
+                      value={localStyles.marginTop || '20px'}
+                      onValueChange={(value) => handleStyleChange('marginTop', value)}
+                    >
+                      <SelectTrigger data-testid="select-button-margin-top">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-2 block text-sm">Bottom Margin</Label>
+                    <Select
+                      value={localStyles.marginBottom || '20px'}
+                      onValueChange={(value) => handleStyleChange('marginBottom', value)}
+                    >
+                      <SelectTrigger data-testid="select-button-margin-bottom">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -814,6 +958,100 @@ export function PropertiesPanel() {
                 </Select>
               </div>
             </div>
+            
+            {/* Spacing Controls */}
+            <div className="space-y-4">
+              <Separator />
+              <div>
+                <Label className="text-sm font-semibold">Spacing</Label>
+                <p className="text-xs text-muted-foreground mb-3">Control space around this image</p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="mb-2 block text-sm">Top Margin</Label>
+                    <Select
+                      value={localStyles.marginTop || '20px'}
+                      onValueChange={(value) => handleStyleChange('marginTop', value)}
+                    >
+                      <SelectTrigger data-testid="select-image-margin-top">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-2 block text-sm">Bottom Margin</Label>
+                    <Select
+                      value={localStyles.marginBottom || '20px'}
+                      onValueChange={(value) => handleStyleChange('marginBottom', value)}
+                    >
+                      <SelectTrigger data-testid="select-image-margin-bottom">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <div>
+                    <Label className="mb-2 block text-sm">Left/Right Padding</Label>
+                    <Select
+                      value={localStyles.paddingX || '20px'}
+                      onValueChange={(value) => handleStyleChange('paddingX', value)}
+                    >
+                      <SelectTrigger data-testid="select-image-padding-x">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="12px">12px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-2 block text-sm">Top/Bottom Padding</Label>
+                    <Select
+                      value={localStyles.paddingY || '0px'}
+                      onValueChange={(value) => handleStyleChange('paddingY', value)}
+                    >
+                      <SelectTrigger data-testid="select-image-padding-y">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="12px">12px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -894,6 +1132,100 @@ export function PropertiesPanel() {
                 />
               </div>
             </div>
+            
+            {/* Spacing Controls */}
+            <div className="space-y-4">
+              <Separator />
+              <div>
+                <Label className="text-sm font-semibold">Spacing</Label>
+                <p className="text-xs text-muted-foreground mb-3">Control space around social icons</p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="mb-2 block text-sm">Top Margin</Label>
+                    <Select
+                      value={localStyles.marginTop || '20px'}
+                      onValueChange={(value) => handleStyleChange('marginTop', value)}
+                    >
+                      <SelectTrigger data-testid="select-social-margin-top">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-2 block text-sm">Bottom Margin</Label>
+                    <Select
+                      value={localStyles.marginBottom || '20px'}
+                      onValueChange={(value) => handleStyleChange('marginBottom', value)}
+                    >
+                      <SelectTrigger data-testid="select-social-margin-bottom">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <div>
+                    <Label className="mb-2 block text-sm">Left/Right Padding</Label>
+                    <Select
+                      value={localStyles.paddingX || '20px'}
+                      onValueChange={(value) => handleStyleChange('paddingX', value)}
+                    >
+                      <SelectTrigger data-testid="select-social-padding-x">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="12px">12px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-2 block text-sm">Top/Bottom Padding</Label>
+                    <Select
+                      value={localStyles.paddingY || '0px'}
+                      onValueChange={(value) => handleStyleChange('paddingY', value)}
+                    >
+                      <SelectTrigger data-testid="select-social-padding-y">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="12px">12px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -955,6 +1287,58 @@ export function PropertiesPanel() {
                     className="flex-1"
                     data-testid="input-divider-color-hex"
                   />
+                </div>
+              </div>
+            </div>
+            
+            {/* Spacing Controls */}
+            <div className="space-y-4">
+              <Separator />
+              <div>
+                <Label className="text-sm font-semibold">Spacing</Label>
+                <p className="text-xs text-muted-foreground mb-3">Control space around this divider</p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="mb-2 block text-sm">Top Margin</Label>
+                    <Select
+                      value={localStyles.marginTop || '20px'}
+                      onValueChange={(value) => handleStyleChange('marginTop', value)}
+                    >
+                      <SelectTrigger data-testid="select-divider-margin-top">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="mb-2 block text-sm">Bottom Margin</Label>
+                    <Select
+                      value={localStyles.marginBottom || '20px'}
+                      onValueChange={(value) => handleStyleChange('marginBottom', value)}
+                    >
+                      <SelectTrigger data-testid="select-divider-margin-bottom">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0px">0px</SelectItem>
+                        <SelectItem value="8px">8px</SelectItem>
+                        <SelectItem value="16px">16px</SelectItem>
+                        <SelectItem value="20px">20px</SelectItem>
+                        <SelectItem value="24px">24px</SelectItem>
+                        <SelectItem value="32px">32px</SelectItem>
+                        <SelectItem value="40px">40px</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>
