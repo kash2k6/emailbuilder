@@ -82,6 +82,11 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       const finalPaddingY = styles.paddingY || defaultY;
       const finalPaddingX = styles.paddingX || defaultX;
       
+      // Gmail-compatible table-based button
+      const buttonBgColor = styles.backgroundColor || '#ef4444';
+      const buttonTextColor = styles.color || '#ffffff';
+      const buttonBorderRadius = styles.borderRadius || '6px';
+      
       return (
         <Section style={{ 
           textAlign: properties.alignment || 'center', 
@@ -90,28 +95,33 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
           paddingLeft: styles.paddingX || '20px',
           paddingRight: styles.paddingX || '20px'
         }}>
-          <Button 
-            href={buttonUrl}
-            style={{
-              backgroundColor: styles.backgroundColor || '#ef4444',
-              color: styles.color || '#ffffff',
-              padding: `${finalPaddingY} ${finalPaddingX}`,
-              borderRadius: styles.borderRadius || '6px',
-              fontSize: styles.fontSize || sizeStyles.fontSize,
-              fontWeight: styles.fontWeight || '600',
-              textDecoration: 'none',
-              display: 'inline-block',
-              lineHeight: '1.5',
-              fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-              border: 'none',
-              cursor: 'pointer',
-              textAlign: 'center',
-              width: properties.fullWidth ? '100%' : 'auto',
-              minWidth: '120px'
-            }}
-          >
-            {buttonText}
-          </Button>
+          <table border={0} cellSpacing={0} cellPadding={0} style={{ margin: '0 auto' }}>
+            <tr>
+              <td 
+                style={{
+                  backgroundColor: buttonBgColor,
+                  borderRadius: buttonBorderRadius,
+                  padding: `${finalPaddingY} ${finalPaddingX}`,
+                  textAlign: 'center'
+                }}
+              >
+                <Link 
+                  href={buttonUrl}
+                  style={{
+                    color: buttonTextColor,
+                    fontSize: styles.fontSize || sizeStyles.fontSize,
+                    fontWeight: styles.fontWeight || '600',
+                    textDecoration: 'none',
+                    fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+                    display: 'inline-block',
+                    lineHeight: '1.4'
+                  }}
+                >
+                  {buttonText}
+                </Link>
+              </td>
+            </tr>
+          </table>
         </Section>
       );
 
