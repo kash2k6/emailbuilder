@@ -89,14 +89,18 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
       
       const isFullWidth = properties.fullWidth;
       
+      // Check if we're inside a column by reducing Section wrapper conflicts
+      const wrapperStyle = {
+        textAlign: properties.alignment || 'center', 
+        marginTop: styles.marginTop || '20px',
+        marginBottom: styles.marginBottom || '20px',
+        paddingLeft: styles.paddingX || '0px',
+        paddingRight: styles.paddingX || '0px',
+        width: '100%'
+      };
+      
       return (
-        <Section style={{ 
-          textAlign: properties.alignment || 'center', 
-          marginTop: styles.marginTop || '20px',
-          marginBottom: styles.marginBottom || '20px',
-          paddingLeft: styles.paddingX || '20px',
-          paddingRight: styles.paddingX || '20px'
-        }}>
+        <div style={wrapperStyle}>
           <table border={0} cellSpacing={0} cellPadding={0} style={{ 
             margin: '0 auto',
             width: isFullWidth ? '100%' : 'auto'
@@ -120,8 +124,7 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
                     width: isFullWidth ? '100%' : 'auto',
                     minWidth: isFullWidth ? '100%' : '120px',
                     boxSizing: 'border-box',
-                    border: `1px solid ${buttonBgColor}`,
-                    msoHide: 'all'
+                    border: `1px solid ${buttonBgColor}`
                   }}
                 >
                   {buttonText}
@@ -129,7 +132,7 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
               </td>
             </tr>
           </table>
-        </Section>
+        </div>
       );
 
     case 'image':
@@ -208,9 +211,11 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
               paddingTop: '0',
               paddingBottom: '0'
             }}>
-              {leftChildren.map((child) => (
-                <ElementToReactEmail key={child.id} element={child} />
-              ))}
+              <div style={{ width: '100%' }}>
+                {leftChildren.map((child) => (
+                  <ElementToReactEmail key={child.id} element={child} />
+                ))}
+              </div>
             </Column>
             <Column style={{ 
               width: '50%', 
@@ -219,9 +224,11 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
               paddingTop: '0',
               paddingBottom: '0'
             }}>
-              {rightChildren.map((child) => (
-                <ElementToReactEmail key={child.id} element={child} />
-              ))}
+              <div style={{ width: '100%' }}>
+                {rightChildren.map((child) => (
+                  <ElementToReactEmail key={child.id} element={child} />
+                ))}
+              </div>
             </Column>
           </Row>
         </Section>
