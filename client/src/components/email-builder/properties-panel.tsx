@@ -1018,6 +1018,195 @@ export function PropertiesPanel() {
           </div>
         )}
 
+        {selectedElement.type === 'section' && (
+          <div className="p-4 space-y-6">
+            {/* Background Type Selector */}
+            <div className="space-y-3">
+              <Label>Background Type</Label>
+              <Select
+                value={localProperties.backgroundType || 'color'}
+                onValueChange={(value: 'color' | 'gradient' | 'image') => handlePropertyChange('backgroundType', value)}
+              >
+                <SelectTrigger data-testid="select-section-background-type">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="color">Solid Color</SelectItem>
+                  <SelectItem value="gradient">Gradient</SelectItem>
+                  <SelectItem value="image">Image</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Color Background */}
+            {(localProperties.backgroundType === 'color' || !localProperties.backgroundType) && (
+              <div className="space-y-3">
+                <Label>Background Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={localStyles.backgroundColor || '#ffffff'}
+                    onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+                    className="w-12 h-10 p-1 border rounded cursor-pointer"
+                    data-testid="input-section-background-color"
+                  />
+                  <Input
+                    type="text"
+                    value={localStyles.backgroundColor || '#ffffff'}
+                    onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+                    className="flex-1"
+                    placeholder="#ffffff"
+                    data-testid="input-section-background-color-hex"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Gradient Background */}
+            {localProperties.backgroundType === 'gradient' && (
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <Label>Gradient Colors</Label>
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        value={localProperties.gradientColors?.[0] || '#ffffff'}
+                        onChange={(e) => handlePropertyChange('gradientColors', [e.target.value, localProperties.gradientColors?.[1] || '#000000'])}
+                        className="w-12 h-10 p-1 border rounded cursor-pointer"
+                        data-testid="input-section-gradient-color-1"
+                      />
+                      <Input
+                        type="text"
+                        value={localProperties.gradientColors?.[0] || '#ffffff'}
+                        onChange={(e) => handlePropertyChange('gradientColors', [e.target.value, localProperties.gradientColors?.[1] || '#000000'])}
+                        className="flex-1"
+                        placeholder="#ffffff"
+                        data-testid="input-section-gradient-color-1-hex"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        value={localProperties.gradientColors?.[1] || '#000000'}
+                        onChange={(e) => handlePropertyChange('gradientColors', [localProperties.gradientColors?.[0] || '#ffffff', e.target.value])}
+                        className="w-12 h-10 p-1 border rounded cursor-pointer"
+                        data-testid="input-section-gradient-color-2"
+                      />
+                      <Input
+                        type="text"
+                        value={localProperties.gradientColors?.[1] || '#000000'}
+                        onChange={(e) => handlePropertyChange('gradientColors', [localProperties.gradientColors?.[0] || '#ffffff', e.target.value])}
+                        className="flex-1"
+                        placeholder="#000000"
+                        data-testid="input-section-gradient-color-2-hex"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <Label>Gradient Direction</Label>
+                  <Select
+                    value={localProperties.gradientDirection || 'to bottom'}
+                    onValueChange={(value) => handlePropertyChange('gradientDirection', value)}
+                  >
+                    <SelectTrigger data-testid="select-section-gradient-direction">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="to top">To Top</SelectItem>
+                      <SelectItem value="to bottom">To Bottom</SelectItem>
+                      <SelectItem value="to left">To Left</SelectItem>
+                      <SelectItem value="to right">To Right</SelectItem>
+                      <SelectItem value="to top right">To Top Right</SelectItem>
+                      <SelectItem value="to bottom right">To Bottom Right</SelectItem>
+                      <SelectItem value="to bottom left">To Bottom Left</SelectItem>
+                      <SelectItem value="to top left">To Top Left</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {/* Image Background */}
+            {localProperties.backgroundType === 'image' && (
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <Label>Background Image URL</Label>
+                  <Input
+                    type="url"
+                    value={localProperties.imageUrl || ''}
+                    onChange={(e) => handlePropertyChange('imageUrl', e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    data-testid="input-section-image-url"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <Label>Fallback Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="color"
+                      value={localStyles.backgroundColor || '#ffffff'}
+                      onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+                      className="w-12 h-10 p-1 border rounded cursor-pointer"
+                      data-testid="input-section-fallback-color"
+                    />
+                    <Input
+                      type="text"
+                      value={localStyles.backgroundColor || '#ffffff'}
+                      onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+                      className="flex-1"
+                      placeholder="#ffffff"
+                      data-testid="input-section-fallback-color-hex"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Border Radius */}
+            <div className="space-y-3">
+              <Label>Border Radius</Label>
+              <Select
+                value={localStyles.borderRadius || '0px'}
+                onValueChange={(value) => handleStyleChange('borderRadius', value)}
+              >
+                <SelectTrigger data-testid="select-section-border-radius">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0px">No Radius</SelectItem>
+                  <SelectItem value="4px">Small (4px)</SelectItem>
+                  <SelectItem value="8px">Medium (8px)</SelectItem>
+                  <SelectItem value="12px">Large (12px)</SelectItem>
+                  <SelectItem value="16px">Extra Large (16px)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Padding */}
+            <div className="space-y-3">
+              <Label>Padding</Label>
+              <Select
+                value={localStyles.padding || '20px'}
+                onValueChange={(value) => handleStyleChange('padding', value)}
+              >
+                <SelectTrigger data-testid="select-section-padding">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="8px">Small (8px)</SelectItem>
+                  <SelectItem value="16px">Medium (16px)</SelectItem>
+                  <SelectItem value="20px">Default (20px)</SelectItem>
+                  <SelectItem value="24px">Large (24px)</SelectItem>
+                  <SelectItem value="32px">Extra Large (32px)</SelectItem>
+                  <SelectItem value="40px">Huge (40px)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
         {/* General Spacing & Styling */}
         <div className="p-4 border-t border-border space-y-6">
           <h4 className="font-medium text-sm">Spacing & Layout</h4>

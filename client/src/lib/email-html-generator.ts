@@ -154,6 +154,8 @@ function generateElementHTML(element: EmailElement, options: EmailGenerationOpti
       return generateSocialHTML(element, options);
     case 'footer':
       return generateFooterHTML(element, options);
+    case 'section':
+      return generateSectionHTML(element, options);
     default:
       return '';
   }
@@ -398,6 +400,48 @@ function generateFooterHTML(element: EmailElement, options: EmailGenerationOptio
     </table>`;
 }
 
+function generateSectionHTML(element: EmailElement, options: EmailGenerationOptions): string {
+  const styles = element.styles || {};
+  const properties = element.properties || {};
+  
+  // Generate background style based on properties
+  const getBackgroundStyle = () => {
+    const backgroundType = properties.backgroundType || 'color';
+    let bgStyle = '';
+    
+    if (backgroundType === 'color') {
+      bgStyle = `background-color: ${styles.backgroundColor || 'transparent'};`;
+    } else if (backgroundType === 'gradient' && properties.gradientColors) {
+      const direction = properties.gradientDirection || 'to bottom';
+      // Convert CSS gradient direction to email-compatible format
+      const emailGradientDirection = direction.replace('to-', '').replace('-', ' ');
+      bgStyle = `background: linear-gradient(${emailGradientDirection}, ${properties.gradientColors[0]}, ${properties.gradientColors[1]}); background-color: ${properties.gradientColors[0]};`;
+    } else if (backgroundType === 'image' && properties.imageUrl) {
+      bgStyle = `background-image: url(${properties.imageUrl}); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: ${styles.backgroundColor || '#ffffff'};`;
+    }
+    
+    return bgStyle;
+  };
+  
+  const padding = styles.padding || '20px';
+  const borderRadius = styles.borderRadius || '0px';
+  const backgroundStyle = getBackgroundStyle();
+  
+  // Generate HTML for child elements
+  const childrenHTML = element.children ? 
+    element.children.map(child => generateElementHTML(child, options)).join('\n') :
+    '';
+
+  return `
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+      <tr>
+        <td style="padding: ${padding}; ${backgroundStyle} border-radius: ${borderRadius};">
+          ${childrenHTML}
+        </td>
+      </tr>
+    </table>`;
+}
+
 function generateTextContent(elements: EmailElement[]): string {
   return elements.map(element => {
     switch (element.type) {
@@ -419,6 +463,9 @@ function generateTextContent(elements: EmailElement[]): string {
         return 'Follow us on social media: Facebook | Twitter | Instagram | LinkedIn';
       case 'footer':
         return 'Footer: © 2024 Your Company. All rights reserved. | Unsubscribe | Preferences | View in Browser';
+      case 'section':
+        const sectionChildren = element.children || [];
+        return sectionChildren.map(child => generateTextContent([child])).join('\n');
       default:
         return '';
     }

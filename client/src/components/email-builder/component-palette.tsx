@@ -13,7 +13,8 @@ import {
   Columns, 
   Share2, 
   AlignCenter,
-  Palette
+  Palette,
+  Square
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -66,6 +67,13 @@ const COMPONENT_TYPES = [
     description: 'Social media links',
     icon: Share2,
     color: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300'
+  },
+  {
+    type: 'section' as const,
+    name: 'Section',
+    description: 'Container with background styling',
+    icon: Square,
+    color: 'bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-300'
   },
   {
     type: 'footer' as const,

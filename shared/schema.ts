@@ -55,7 +55,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export const emailElementSchema = z.object({
   id: z.string(),
-  type: z.enum(['text', 'button', 'image', 'divider', 'spacer', 'footer', 'header', 'columns', 'social']),
+  type: z.enum(['text', 'button', 'image', 'divider', 'spacer', 'footer', 'header', 'columns', 'social', 'section']),
   content: z.string().default(''),
   styles: z.record(z.string()).default({}),
   properties: z.record(z.any()).default({}),

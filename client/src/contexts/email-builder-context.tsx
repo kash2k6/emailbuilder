@@ -123,11 +123,11 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     };
 
     if (parentId) {
-      // Add to column
+      // Add to column or section
       setState(prev => ({
         ...prev,
         elements: prev.elements.map(el =>
-          el.id === parentId && el.type === 'columns'
+          el.id === parentId && (el.type === 'columns' || el.type === 'section')
             ? { ...el, children: [...(el.children || []), newElement] }
             : el
         ),
@@ -385,6 +385,8 @@ function getDefaultContent(type: EmailElement['type']): string {
       return '';
     case 'social':
       return '';
+    case 'section':
+      return '';
     default:
       return '';
   }
@@ -456,6 +458,14 @@ function getDefaultStyles(type: EmailElement['type']): Record<string, any> {
         textAlign: 'center',
         margin: '20px 0',
       };
+    case 'section':
+      return {
+        backgroundColor: 'transparent',
+        borderRadius: '0px',
+        padding: '20px',
+        margin: '20px 0',
+        minHeight: '100px',
+      };
     case 'footer':
       return {
         fontSize: '14px',
@@ -506,6 +516,10 @@ function getDefaultProperties(type: EmailElement['type']): Record<string, any> {
         linkedin: '',
         tiktok: '',
         iconColor: '',
+      };
+    case 'section':
+      return {
+        backgroundType: 'color',
       };
     case 'footer':
       return {

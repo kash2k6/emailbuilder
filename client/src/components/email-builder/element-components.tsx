@@ -6,6 +6,7 @@ import { useDragDropContext } from "@/lib/drag-drop-context";
 import { useEmailBuilder } from "@/contexts/email-builder-context";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faInstagram, faLinkedin, faTiktok } from '@fortawesome/free-brands-svg-icons';
+import { Plus } from "lucide-react";
 
 interface ElementComponentsProps {
   element: EmailElement;
@@ -278,6 +279,75 @@ export function ElementComponents({ element }: ElementComponentsProps) {
     );
   };
 
+  const renderSectionElement = () => {
+    const styles = element.styles || {};
+    const properties = element.properties || {};
+    
+    // Generate background style based on properties
+    const getBackgroundStyle = () => {
+      const backgroundType = properties.backgroundType || 'color';
+      let style: React.CSSProperties = {
+        borderRadius: styles.borderRadius || '0px',
+        padding: styles.padding || '20px',
+        margin: styles.margin || '20px 0',
+        minHeight: styles.minHeight || '100px',
+        border: '2px dashed transparent',
+      };
+      
+      if (backgroundType === 'color') {
+        style.backgroundColor = styles.backgroundColor || 'transparent';
+      } else if (backgroundType === 'gradient' && properties.gradientColors) {
+        const direction = properties.gradientDirection || 'to-bottom';
+        style.background = `linear-gradient(${direction}, ${properties.gradientColors[0]}, ${properties.gradientColors[1]})`;
+      } else if (backgroundType === 'image' && properties.imageUrl) {
+        style.backgroundImage = `url(${properties.imageUrl})`;
+        style.backgroundSize = 'cover';
+        style.backgroundPosition = 'center';
+        style.backgroundRepeat = 'no-repeat';
+        if (styles.backgroundColor) {
+          style.backgroundColor = styles.backgroundColor; // Fallback
+        }
+      }
+      
+      return style;
+    };
+    
+    const dropTargetProps = createDropTarget({
+      onDrop: (componentType: string) => {
+        addElement(componentType as any, element.id);
+      },
+    });
+    
+    return (
+      <div
+        style={getBackgroundStyle()}
+        className="relative group transition-all duration-200 hover:border-dashed hover:border-primary/30"
+        data-testid="preview-section"
+        {...dropTargetProps}
+      >
+        {element.children && element.children.length > 0 ? (
+          <div className="space-y-4">
+            {element.children.map((child: any) => (
+              <ElementComponents key={child.id} element={child} />
+            ))}
+          </div>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-center p-4">
+            <div className="text-muted-foreground">
+              <Plus className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">
+                Drop components here or click to add
+              </p>
+            </div>
+          </div>
+        )}
+        
+        {/* Visual indicator when hovering */}
+        <div className="absolute inset-0 pointer-events-none border-2 border-dashed border-transparent group-hover:border-primary/30 rounded transition-colors" />
+      </div>
+    );
+  };
+
   const renderFooterElement = () => {
     const styles = element.styles || {};
     
@@ -342,6 +412,8 @@ export function ElementComponents({ element }: ElementComponentsProps) {
       return renderSocialElement();
     case 'footer':
       return renderFooterElement();
+    case 'section':
+      return renderSectionElement();
     default:
       return (
         <div className="p-4 border border-dashed border-border rounded text-center text-muted-foreground">
