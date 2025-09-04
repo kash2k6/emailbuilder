@@ -8,18 +8,20 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export function EmailCanvas() {
-  const { elements, addElement, selectedElement, selectElement, deleteElement, duplicateElement, moveElement, emailBackground } = useEmailBuilder();
+  const { elements, addElement, selectedElement, selectElement, deleteElement, duplicateElement, moveElement, reorderElements, emailBackground } = useEmailBuilder();
   const { createDropTarget, isDragActive } = useDragDropContext();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const handleDrop = (componentType: string) => {
+    // Don't handle reorder events here - they're handled by individual elements
+    if (componentType === 'reorder') return;
     addElement(componentType as any);
   };
 
   const dropTargetProps = createDropTarget({
     onDrop: handleDrop,
-    // Remove accepts filter to allow all component types
+    accepts: ['text', 'button', 'image', 'divider', 'spacer', 'columns', 'social', 'section', 'footer', 'header'], // Only accept component types, not reorder
   });
 
   // Generate background style based on emailBackground
@@ -110,6 +112,8 @@ export function EmailCanvas() {
               onDragStart={(e) => {
                 setDraggedIndex(index);
                 e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', 'reorder');
+                e.dataTransfer.setData('elementIndex', index.toString());
               }}
               onDragEnd={() => {
                 setDraggedIndex(null);
@@ -128,20 +132,8 @@ export function EmailCanvas() {
                 e.preventDefault();
                 e.stopPropagation();
                 if (draggedIndex !== null && draggedIndex !== index) {
-                  // Create new array with reordered elements
-                  const newElements = [...elements];
-                  const [draggedItem] = newElements.splice(draggedIndex, 1);
-                  newElements.splice(index, 0, draggedItem);
-                  
-                  // Calculate how many moves needed
-                  const moveCount = Math.abs(draggedIndex - index);
-                  const direction = draggedIndex < index ? 'down' : 'up';
-                  const elementId = elements[draggedIndex].id;
-                  
-                  // Perform the moves
-                  for (let i = 0; i < moveCount; i++) {
-                    moveElement(elementId, direction);
-                  }
+                  // Use the new reorderElements function for efficient reordering
+                  reorderElements(draggedIndex, index);
                 }
                 setDraggedIndex(null);
                 setDragOverIndex(null);

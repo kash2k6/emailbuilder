@@ -29,6 +29,7 @@ interface EmailBuilderContextType extends EmailBuilderState {
   duplicateElement: (id: string) => void;
   selectElement: (id: string) => void;
   moveElement: (id: string, direction: 'up' | 'down') => void;
+  reorderElements: (sourceIndex: number, destinationIndex: number) => void;
   setSubject: (subject: string) => void;
   setEmailWidth: (width: number) => void;
   setEmailBackground: (background: Partial<EmailBuilderState['emailBackground']>) => void;
@@ -285,6 +286,22 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  // Reorder elements by indices (for drag and drop)
+  const reorderElements = useCallback((sourceIndex: number, destinationIndex: number) => {
+    if (sourceIndex === destinationIndex) return;
+    
+    setState(prev => {
+      const elements = [...prev.elements];
+      const [draggedElement] = elements.splice(sourceIndex, 1);
+      elements.splice(destinationIndex, 0, draggedElement);
+      
+      return {
+        ...prev,
+        elements,
+      };
+    });
+  }, []);
+
   // Other methods...
   const setSubject = useCallback((subject: string) => {
     setState(prev => ({ ...prev, subject }));
@@ -361,6 +378,7 @@ export function EmailBuilderProvider({ children }: { children: ReactNode }) {
     duplicateElement,
     selectElement,
     moveElement,
+    reorderElements,
     setSubject,
     setEmailWidth,
     setEmailBackground,
