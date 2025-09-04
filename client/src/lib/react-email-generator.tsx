@@ -87,32 +87,33 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
   switch (element.type) {
     case 'text':
     case 'header':
-      // Use a div wrapper to ensure padding is respected by email clients
+      // Use table-based approach for reliable email client support
       return (
-        <div style={{
+        <table border={0} cellSpacing={0} cellPadding={0} style={{ 
+          width: '100%',
           marginTop: safeStyles.marginTop,
           marginBottom: safeStyles.marginBottom,
           marginLeft: safeStyles.marginLeft,
           marginRight: safeStyles.marginRight,
-          paddingTop: safeStyles.paddingTop,
-          paddingBottom: safeStyles.paddingBottom,
-          paddingLeft: safeStyles.paddingLeft,
-          paddingRight: safeStyles.paddingRight,
-          backgroundColor: safeStyles.backgroundColor,
         }}>
-          <Text style={{
-            fontSize: safeStyles.fontSize,
-            color: safeStyles.color,
-            fontFamily: safeStyles.fontFamily,
-            textAlign: safeStyles.textAlign as any,
-            lineHeight: safeStyles.lineHeight,
-            fontWeight: safeStyles.fontWeight,
-            margin: '0',
-            padding: '0',
-          }} dangerouslySetInnerHTML={{
-            __html: processTextWithMarkdown(element.content)
-          }} />
-        </div>
+          <tr>
+            <td style={{
+              paddingTop: safeStyles.paddingTop,
+              paddingBottom: safeStyles.paddingBottom,
+              paddingLeft: safeStyles.paddingLeft,
+              paddingRight: safeStyles.paddingRight,
+              backgroundColor: safeStyles.backgroundColor,
+              fontSize: safeStyles.fontSize,
+              color: safeStyles.color,
+              fontFamily: safeStyles.fontFamily,
+              textAlign: safeStyles.textAlign as any,
+              lineHeight: safeStyles.lineHeight,
+              fontWeight: safeStyles.fontWeight,
+            }} dangerouslySetInnerHTML={{
+              __html: processTextWithMarkdown(element.content)
+            }} />
+          </tr>
+        </table>
       );
 
     case 'button':
