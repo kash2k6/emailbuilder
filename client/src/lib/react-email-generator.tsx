@@ -97,24 +97,25 @@ function ElementToReactEmail({ element }: { element: EmailElement }) {
         }}>
           <table border={0} cellSpacing={0} cellPadding={0} style={{ margin: '0 auto' }}>
             <tr>
-              <td 
-                style={{
-                  backgroundColor: buttonBgColor,
-                  borderRadius: buttonBorderRadius,
-                  padding: `${finalPaddingY} ${finalPaddingX}`,
-                  textAlign: 'center'
-                }}
-              >
+              <td>
                 <Link 
                   href={buttonUrl}
                   style={{
+                    backgroundColor: buttonBgColor,
                     color: buttonTextColor,
+                    borderRadius: buttonBorderRadius,
+                    padding: `${finalPaddingY} ${finalPaddingX}`,
                     fontSize: styles.fontSize || sizeStyles.fontSize,
                     fontWeight: styles.fontWeight || '600',
                     textDecoration: 'none',
                     fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
                     display: 'inline-block',
-                    lineHeight: '1.4'
+                    lineHeight: '1.4',
+                    textAlign: 'center',
+                    minWidth: '120px',
+                    boxSizing: 'border-box',
+                    border: 'none',
+                    msoHide: 'all'
                   }}
                 >
                   {buttonText}
