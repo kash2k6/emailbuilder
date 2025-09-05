@@ -14,7 +14,7 @@ import {
   Hr,
   Link
 } from '@react-email/components';
-import { EmailElement } from '@shared/schema';
+import { EmailElement } from '../shared/schema';
 
 export interface ReactEmailGenerationOptions {
   emailWidth?: number;
