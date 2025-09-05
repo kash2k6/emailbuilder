@@ -593,3 +593,19 @@ function generateTextContent(elements: EmailElement[]): string {
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').replace(/\n\n/g, '\n').trim();
 }
+
+// Simplified HTML generation function for API routes
+export function generateEmailHTML(elements: any[], emailWidth: number = 600): string {
+  try {
+    const emailElement = EmailTemplate({
+      elements,
+      subject: 'Email',
+      options: { emailWidth }
+    });
+    
+    return render(emailElement);
+  } catch (error) {
+    console.error('Error generating email HTML:', error);
+    throw new Error('Failed to generate email HTML');
+  }
+}
